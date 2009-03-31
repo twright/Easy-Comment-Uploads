@@ -2,7 +2,7 @@
 Contributors: Tom Wright
 Tags: comments, uploads, images
 Requires at least: 2.0.2
-Tested up to: 2.7.2
+Tested up to: 2.7.1
 Stable tag: 0.05
 
 == Description ==
@@ -21,6 +21,6 @@ The GPLv3 of course :-). You can reuse it, hack it, redistibute it or do whateve
 
 The answers to that question is sadly no, not until I get round to adding some (it is still in beta though). Uploaded files will however be bound by the global php settings for uploads which should limit file size but not file type.
 
-= I have just thought of and amazing feature your plugin should have, what can I do? =
+= I have just thought of an amazing feature your plugin should have, what can I do? =
 
 Good for you - send me and email or comment and if I like the idea, I will see whether my coding skills will streach to making it. If you have a patch or want to contribute then even better.
