@@ -3,7 +3,7 @@ Contributors: Tom Wright
 Tags: comments, uploads, images
 Requires at least: 2.0.2
 Tested up to: 2.7.2
-Stable tag: 0.5
+Stable tag: 0.05
 
 == Description ==
 This plugin allow your visitors to attach imaged or other file to their comments as easily as possible. I designed it for http://langtreeshout.org
