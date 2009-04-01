@@ -9,20 +9,20 @@
             if ($_FILES["file"]["error"] > 0){
               echo "Error code: " . $_FILES["file"]["error"];
             } else {
-              if (file_exists("/var/www/html/wordpress-mu/upload/"
+              if (file_exists("./upload/"
                   . $_FILES["file"]["name"])){
                 echo "<b>" . $_FILES["file"]["name"] . "</b> already exists";
               } else {
                 move_uploaded_file($_FILES["file"]["tmp_name"],
-                  "/var/www/html/wordpress-mu/upload/" .
+                  "./upload/" .
                   $_FILES["file"]["name"]);
-                echo "<b>[img]</b>" . "/wordpress/upload/"
+                echo "<b>[img]</b>" . "/upload/"
                   . $_FILES["file"]["name"] . "<b>[/img]</b>";
               }
             }
 
             echo "&nbsp;&nbsp;&nbsp; | ";
-            echo "<a href='upload.html'>back</a>";
+            echo "<a href='./upload.html'>back</a>";
         ?>
     </body>
 </html>
