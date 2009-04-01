@@ -23,7 +23,7 @@ function image_upload_form(){
     echo ("
         <br>
         Select and image to upload and paste the code produced into your comment:
-        <iframe src='./wp-content/plugins/comment-uploads/upload.html'
+        <iframe src='/wp-content/plugins/comment-uploads/upload.html'
            width='500px' height='40' frameborder='0' scrolling='no'>
             <p>Your browser does not support iframes.</p>
         </iframe>
