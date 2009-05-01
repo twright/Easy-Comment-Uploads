@@ -16,6 +16,7 @@ This plugin allow your visitors to attach imaged or other file to their comments
  
 = Coming soon =
 (hopefully I should get round to doing these quite soon, consider it as a rough roadmap to version 1.0)
+
  * Ajax or flash uploader
  * Options page
  * Auto-adding the file links to comment (e.g. no copy and paste)
