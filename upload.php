@@ -3,6 +3,13 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title></title>
+        
+        <script language="javascript" type="text/javascript">
+        	function addtext(imglink) {
+          	parent.document.forms["commentform"]["comment-p6"].value += '\n' + imglink ;
+          	//parent.document.getElementByName("comment").value += '\n' + imglink ;
+        	}
+        </script>
     </head>
     <body>
         <?php
@@ -30,12 +37,13 @@
                 $upload_file = "<b>[file]</b>" . $upload_url
                   . $_FILES["file"]["name"] . "<b>[/file]</b>";
               } else {
-								_e('Sorry but your file could not be uploaded.');
+								echo 'Sorry - your file could not be uploaded';
 							}
             }
-
+            
+						echo "<a href=\"#\" onClick=\"addtext('test');\">Insert link<a>";
             echo "&nbsp;&nbsp;&nbsp; | ";
-            echo "<a href='./upload.html'>" . __('Upload more files') . "</a>";
+            echo "<a href='./upload.html'>" . 'Upload more files' . "</a>";
         ?>
     </body>
 </html>

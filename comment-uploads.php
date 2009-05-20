@@ -28,10 +28,10 @@ if (!file_exists($upload_dir)){
 	mkdir($upload_dir);
 }
 
-if ( !file_exists($upload_php))
+if ( !file_exists($upload_php || $devel ))
 copy($plugin_dir . "upload.php", $upload_php);
 
-if ( !file_exists($upload_html))
+if ( !file_exists($upload_html || $devel ))
 copy($plugin_dir . "upload.html", $upload_html);
 
 $fh = fopen($upload_dir . 'upload_url.txt', 'w') or die("can't open file");
@@ -53,10 +53,10 @@ function comment_upload_form(){
 		global $upload_html, $upload_html_url, $upload_php;
     echo ("
         <br />
-        <strong>." __('Upload files:','easy-comment-uploads.') ."</strong>
-        <br />".
-        __('Select the file you want, click upload and paste the link produced into your comment')
-        ."<iframe src='" . $upload_html_url . "' width='500px' height='60px' scrolling='auto' frameborder='0'></iframe>
+        <strong>".__('Upload files:','easy-comment-uploads.')."</strong>
+        <br />"
+        .__('Select the file you want, click upload and paste the link produced into your comment').
+        "<iframe src='" . $upload_html_url . "' width='500px' height='60px' scrolling='auto' frameborder='0'></iframe>
     ");
 }
 
