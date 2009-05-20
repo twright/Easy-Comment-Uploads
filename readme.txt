@@ -15,13 +15,12 @@ This plugin allow your visitors to attach imaged or other file to their comments
  * General code cleanup
  
 = Coming soon =
+(hopefully I should get round to doing these quite soon, consider it as a rough roadmap to version 1.0)
+
  * Ajax or flash uploader
  * Options page
  * Auto-adding the file links to comment (e.g. no copy and paste)
  * Moving uploaded files to somewhere more sensible (e.g. uploads/commments on standard Wordpress and the blogs folder for Mu)
- * Internationalization (I might try to do German but any other translations would be welcome)
-
-(hopefully I should get round to doing these quite soon, consider it as a rough roadmap to version 1.0)
 
 == Installation ==
 Just add to /wp-content/plugins and activate or use the automatic plugin installer. If you want to use it in Wordpress Mu for all blogs just copy comment-uploads.php to /wp-content/mu-plugins and leave the rest in place or use the new activate site wide option for an simpler installation. 
@@ -35,10 +34,6 @@ The GPLv3 of course :-). You can reuse it, hack it, redistibute it or do whateve
 = Does the plugin perform and checks on uploaded files? =
 
 The answers to that question is sadly no, not until I get round to adding some (it is still in beta though). Uploaded files will however be bound by the global php settings for uploads which should limit file size but not file type.
-
-= Can I get it translated into my language? =
-
-I am currenltly working on adding I18n support to the plugin, then would will be able to translate it fairly easily (I might also do a German translation myself).
 
 = It does not work, what can I do? =
 

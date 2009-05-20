@@ -18,20 +18,17 @@ $upload_html = $upload_dir . 'upload.html';
 $upload_php =  $upload_dir . 'upload.php';
 //$upload_html_url = get_option('siteurl') . "/wp-content/uploads/comments/upload.html";
 $upload_html_url = get_option('siteurl') . "/wp-content/upload/upload.html";
-$devel = true;
 
 $plugin_dir = dirname(__FILE__) . '/';
-
-load_plugin_textdomain( 'easy-comment-uploads.', 'wp-content/plugins/' . $plugin_dir, $plugin_dir );
 
 if (!file_exists($upload_dir)){
 	mkdir($upload_dir);
 }
 
-if ( !file_exists($upload_php || $devel ))
+if ( !file_exists($upload_php))
 copy($plugin_dir . "upload.php", $upload_php);
 
-if ( !file_exists($upload_html || $devel ))
+if ( !file_exists($upload_html))
 copy($plugin_dir . "upload.html", $upload_html);
 
 $fh = fopen($upload_dir . 'upload_url.txt', 'w') or die("can't open file");
@@ -39,10 +36,10 @@ fwrite($fh, $upload_url);
 
 // Replaces [img] tags in comments with linked images (with lightbox support)
 // Accepts either [img]image.png[/img] or [img=image.png]
-// Thanks to Trevor Fitzgerald (http://www.trevorfitzgerald.com/) for
-// providing an invaluable example for this regualar expersions code.
+// Thanks to Trevor Fitzgerald (http://) for providing an invaluable example for
+// this regualar expersions code.
 function insert_links($content){
-$content = preg_replace('/\[img=?\]*(.*?)(\[\/img)?\]/e', '"<a href=\"$1\" rel=\"lightbox[comments]\"> <img src=\"$1\" style=\"max-width: 100%\" alt=\"" . basename("$1") . "\" /></a>"', $content);
+$content = preg_replace('/\[img=?\]*(.*?)(\[\/img)?\]/e', '"<a href=\"$1\" rel=\"lightbox[comments]\"> <img src=\"$1\" style=\"max-width: 100%\" alt\"" . basename("$1") . "\" /></a>"', $content);
 $content = preg_replace('/\[file=?\]*(.*?)(\[\/file)?\]/e', '"<a href=\"$1\">$1</a>"', $content);
 return $content;
 }
@@ -53,17 +50,18 @@ function comment_upload_form(){
 		global $upload_html, $upload_html_url, $upload_php;
     echo ("
         <br />
-        <strong>".__('Upload files:','easy-comment-uploads.')."</strong>
-        <br />"
-        .__('Select the file you want, click upload and paste the link produced into your comment').
-        "<iframe src='" . $upload_html_url . "' width='500px' height='60px' scrolling='auto' frameborder='0'></iframe>
+        <strong>Upload files:</strong>
+        <br />
+        Select the file you want, click upload and paste the link produced into your comment
+        <iframe src='" . $upload_html_url . "' width='500px' height='60px' scrolling='auto' frameborder='0'></iframe>
     ");
 }
 
 function comment_upload_deactivate() {
-	global $upload_html, $upload_php;
+				global $upload_html, $upload_php;
         unlink($upload_html);
         unlink($upload_php);
+//        unlink(WP_CONTENT_DIR . '/upload.html');
 }
 
 // Register code with wordpress
