@@ -12,7 +12,9 @@ else
 
 if ($type == "img" || !$images_only) {
 		if (file_exists($target_path) || false ) {
-				$alert = "A file by the same name already exists, please try renaming.";
+			$alert = "A file by the same name already exists, please try renaming.";
+		} else if(!check_uploaded_files())  {
+			$alert = "You are attempting to upload a file with a disallowed/unsafe filetype!";
 		} else if (move_uploaded_file($_FILES['file']['tmp_name'], $target_path)) {
 	    $filename = $_FILES["file"]["name"];
 	    $filelink = $target_url . $filename;
@@ -24,6 +26,19 @@ if ($type == "img" || !$images_only) {
     $alert = "Sorry, you can only upload images.";
 }
 //$alert = "test";
+
+function check_uploaded_files() {
+		$blacklist = array(".php", ".phtml", ".php3", ".php4", ".php5", ".php6", ".cgi", ".fcgi", ".htaccess", ".js", ".shtml", ".pl", ".py", ".exe", ".bat", ".sh");  
+		foreach ($blacklist as $file) {  
+			if(preg_match("/$file$/i", $_FILES['file']['name'])) {  
+					$insecure = true;
+			}
+		}
+		if ($insecure == true)
+			return false;
+		else
+			return true;
+}
 ?>
 <script type="text/javascript">
 alert_msg = "<?php echo $alert ?>";

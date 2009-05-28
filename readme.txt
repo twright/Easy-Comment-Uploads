@@ -1,43 +1,60 @@
-=== Plugin Name ===
-Contributors: Tom Wright
+=== Easy Comment Uploads ===
+Contributors: Tom Wright, 
 Tags: comments, uploads, images, wpmu
 Requires at least: 2.0.2
 Tested up to: 2.7.1
-Stable tag: 0.10
+Stable tag: 0.14
 
 == Description ==
 This plugin allow your visitors to attach imaged or other file to their comments as easily as possible. I designed it for http://langtreeshout.org . It also adds lightbox code for all inserted images. It has been tested for Wordpress and Wordpress Mu, if anything does not work please just email me at tom.tdw@gmail.com .
 
+If you like it please rate it, give feedback or you can donate.
+
 = Recent Changes =
- * Better support for non-image uploads
- * Installation now much less hacky (if it did not work for you before it should now)
- * Upload directories combined
- * General code cleanup
+
+*0.14*
+
+ * Auto-adding the file links to comment (e.g. no copy and paste).
+ * Much nice user experience.
+ * More code cleanup.
+ * Blacklist of dangerous file types (this was a serious security problem in old version, please upgrade ASAP).
+
+*0.10*
+
+ * Better support for non-image uploads.
+ * Installation now much less hacky (if it did not work for you before it should now).
+ * Upload directories combined.
+ * General code cleanup.
  
 = Coming soon =
-(hopefully I should get round to doing these quite soon, consider it as a rough roadmap to version 1.0)
 
- * Ajax or flash uploader
  * Options page
- * Auto-adding the file links to comment (e.g. no copy and paste)
- * Moving uploaded files to somewhere more sensible (e.g. uploads/commments on standard Wordpress and the blogs folder for Mu)
+ * Moving uploaded files to somewhere more sensible (e.g. uploads/comments on standard Wordpress and the blogs folder for Mu)
+ * Internationalisation support including BR_pt translation
+ * More user experience niceness :-)
+
+*(hopefully I should get round to doing these quite soon, consider it as a rough roadmap to version 1.0)*
 
 == Installation ==
-Just add to /wp-content/plugins and activate or use the automatic plugin installer. If you want to use it in Wordpress Mu for all blogs just copy comment-uploads.php to /wp-content/mu-plugins and leave the rest in place or use the new activate site wide option for an simpler installation. 
+Just add to /wp-content/plugins and activate or use the automatic plugin installer. If you want to use it in Wordpress Mu for all blogs just copy comment-uploads.php to /wp-content/mu-plugins and leave the rest in place or use the new activate site wide option for an much simpler installation. 
 
 == Frequently Asked Questions ==
 
 = What license is this plugin available under? =
 
-The GPLv3 of course :-). You can reuse it, hack it, redistibute it or do whatever else you like as long as you keep the source open under the same license.
-
-= Does the plugin perform and checks on uploaded files? =
-
-The answers to that question is sadly no, not until I get round to adding some (it is still in beta though). Uploaded files will however be bound by the global php settings for uploads which should limit file size but not file type.
+The GPLv3 of course :-). You can reuse it, hack it, redistribute it or do whatever else you like as long as you keep the source open under the same license. It is and will always be free for personal or commercial use but if you like it you can donate or pay me to work on the features you need. The plugin is supplied with no warranty whatsoever and any contributors will not be held responsible for any damages caused by its use.
 
 = It does not work, what can I do? =
 
 If you need help with the plugin then email me at tom.tdw@gmail.com and I will be more than willing to give any help I can.
+
+= Is it available in my language? =
+
+Currently the plugin is only available in English but in the next version I will be adding i18n support so that anyone is free to translation it, hopefully then it will be available in a wider variety of languages - we already have a BR_pt translation which will be available at that time.
+
+= Is it secure? =
+
+Currently the plugin blacklists unsafe filetypes and is bound by the global php security settings so it should be fairly safe to use. However as with any plugin there is a risk and if the security measures taken by your site are not adequate, then this risk is greatly increased. As always I recommend you keep backups and if you do discover security issues with the plugin please tell me. 
 
 = I have just thought of an amazing feature your plugin should have, what can I do? =
 
