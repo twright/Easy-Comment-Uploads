@@ -12,14 +12,15 @@ If you like it please rate it, give feedback or you can donate.
 
 = Recent Changes =
 
-*0.14*
+
+**0.14**
 
  * Auto-adding the file links to comment (e.g. no copy and paste).
  * Much nice user experience.
  * More code cleanup.
  * Blacklist of dangerous file types (this was a serious security problem in old version, please upgrade ASAP).
 
-*0.10*
+**0.10**
 
  * Better support for non-image uploads.
  * Installation now much less hacky (if it did not work for you before it should now).
