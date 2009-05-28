@@ -12,7 +12,6 @@ If you like it please rate it, give feedback or you can donate.
 
 = Recent Changes =
 
-
 **0.14**
 
  * Auto-adding the file links to comment (e.g. no copy and paste).
