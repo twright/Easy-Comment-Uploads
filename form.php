@@ -2,11 +2,12 @@
 </form>
 <br />
 <!-- Easy comment uploads for Wordpress by Tom Wright: http://wordpress.org/extend/plugins/easy-comment-uploads/ -->
-<p>File Uploading Like Gmail. You can upload multiple files without submitting the whole page. You can upload file like ajax. This is using iframe for file upload</p>
+<strong>Upload files:</strong>
+<p>You can include images or files in your comment by selecting them below. Once you select a file, it will be uploaded and a link to it added to your comment. You can upload as many images or files as you like and they will all be added to your comment.</p>
 
 <form target="hiddenframe" enctype="multipart/form-data" action="<?php echo get_option('siteurl') . '/wp-content/plugins/easy-comment-uploads/' ?>upload.php" method="POST" name="uploadform" id="uploadform">
 <p>
-  Attach File:
+  Select File:
   <input type="file" name="file" id="fileField"   onchange="document.uploadform.submit()" />
 </p>
 <p id="uploadedfile" >
