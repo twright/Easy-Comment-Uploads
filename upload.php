@@ -5,7 +5,7 @@ $target_path = $target_dir . basename( $_FILES['file']['name']);
 $target_url = file_get_contents("upload_url.txt");
 $images_only = false;
 
-if (eregi('jpg', $_FILES['file']['type']) || eregi('png', $_FILES['file']['type']) || eregi('gif', $_FILES['file']['type']))
+if (eregi('jpeg', $_FILES['file']['type']) || eregi('png', $_FILES['file']['type']) || eregi('gif', $_FILES['file']['type']))
     $type = "img";
 else
 		$type = "file";
