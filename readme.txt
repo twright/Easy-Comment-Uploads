@@ -6,7 +6,7 @@ Tested up to: 2.7.1
 Stable tag: 0.14
 
 == Description ==
-This plugin allow your visitors to attach imaged or other file to their comments as easily as possible. I designed it for http://langtreeshout.org . It also adds lightbox code for all inserted images. It has been tested for Wordpress and Wordpress Mu, if anything does not work please just email me at tom.tdw@gmail.com .
+This plugin allow your visitors to attach images or other file to their comments as easily as possible. I designed it for http://langtreeshout.org . It also adds lightbox code for all inserted images. It has been tested for Wordpress and Wordpress Mu, if anything does not work please just email me at tom.tdw@gmail.com .
 
 If you like it please rate it, give feedback or you can donate.
 
