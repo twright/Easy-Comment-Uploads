@@ -12,6 +12,11 @@ If you like it please rate it, give feedback or you can donate.
 
 = Recent Changes =
 
+**0.15**
+
+ * Ensure that any insecure scripts left over from old versions are removed.
+ * Reduced file I/O (should boost performance)
+
 **0.14**
 
  * Auto-adding the file links to comment (e.g. no copy and paste).
@@ -31,9 +36,13 @@ If you like it please rate it, give feedback or you can donate.
  * Options page
  * Moving uploaded files to somewhere more sensible (e.g. uploads/comments on standard Wordpress and the blogs folder for Mu)
  * Internationalisation support including BR_pt translation
- * More user experience niceness :-)
+ * Uploads for Buddypress wires
+ * Increased theme compatibility (testing needed)
+  * More UI niceness :-)
 
 *(hopefully I should get round to doing these quite soon, consider it as a rough roadmap to version 1.0)*
+
+For more updates about the plugin or to ask questions, follow me on Twitter: http://twitter.com/tomdwright
 
 == Installation ==
 Just add to /wp-content/plugins and activate or use the automatic plugin installer. If you want to use it in Wordpress Mu for all blogs just copy comment-uploads.php to /wp-content/mu-plugins and leave the rest in place or use the new activate site wide option for an much simpler installation. 

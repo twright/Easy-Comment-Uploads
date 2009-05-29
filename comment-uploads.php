@@ -4,9 +4,11 @@ Plugin Name: Easy Comment Uploads
 Plugin URI: http://wiki.langtreeshout.org/plugins/commentuploads
 Description: Allow your users to easily upload images in their comments.
 Author: Tom Wright
-Version: 0.14
+Version: 0.15
 Author URI: http://twright.langtreeshout.org/
 */
+
+// TODO: Find better way of sharing info between scripts
 if( !defined('WP_CONTENT_DIR') )
     define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
 //$upload_dir =  get_option('upload_path') . '/comments/';
@@ -15,14 +17,23 @@ $upload_dir =  WP_CONTENT_DIR . '/upload/';
 $upload_url = get_option('siteurl') . '/wp-content/upload/';
 $plugin_dir = dirname(__FILE__) . '/';
 
+// I/O TODO: Reduce I/O to increase performance
 if (!file_exists($upload_dir))
 	mkdir($upload_dir);
+if (!file_exists($plugin_dir . 'upload_url.txt') ||  !file_exists($plugin_dir . 'upload_dir.txt')) {
 $fh = fopen($plugin_dir . 'upload_url.txt', 'w') or die("easy-comment-uploads: can't open file");
 fwrite($fh, $upload_url);
 fclose($fh);
 $fhh = fopen($plugin_dir . 'upload_dir.txt', 'w') or die("easy-comment-uploads: can't open file");
 fwrite($fhh, $upload_dir);
 fclose($fhh);
+}
+// Remove insecure files left over from old versions
+if (!file_exists($upload_dir . 'upload.php')) {
+		unlink ($upload_dir . 'upload.php');
+		unlink ($upload_dir . 'upload.html');
+		unlink ($plugin_dir . 'upload.html');
+}
 
 // Replaces [img] tags in comments with linked images (with lightbox support)
 // Accepts either [img]image.png[/img] or [img=image.png]
