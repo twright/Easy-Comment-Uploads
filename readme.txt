@@ -38,7 +38,7 @@ If you like it please rate it, give feedback or you can donate.
  * Internationalisation support including BR_pt translation
  * Uploads for Buddypress wires
  * Increased theme compatibility (testing needed)
-  * More UI niceness :-)
+ * More UI niceness :-)
 
 *(hopefully I should get round to doing these quite soon, consider it as a rough roadmap to version 1.0)*
 
