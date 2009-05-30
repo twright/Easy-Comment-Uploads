@@ -55,7 +55,7 @@ alert(alert_msg);
 
 if (!filecode)
 document.write("Upload failed");
-else if (parent.document.forms["commentform"]["comment"].value)
+else if (parent.document.getElementById("comment").value)
 parent.document.forms["commentform"]["comment"].value += "\n" + filecode;
 else
 parent.document.forms["commentform"]["comment"].value += filecode;
