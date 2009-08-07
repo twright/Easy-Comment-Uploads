@@ -38,7 +38,7 @@ if (file_exists($upload_dir . 'upload.php'))
 // Thanks to Trevor Fitzgerald (http://www.trevorfitzgerald.com/) for providing an invaluable example for
 // this regualar expersions code.
 function insert_links($content){
-    $content = preg_replace('/\[img=?\]*(.*?)(\[\/img)?\]/e', '"<a href=\"$1\" rel=\"lightbox[comments]\"> <img src=\"$1\" style=\"max-width: 540px\" alt=\"" . basename("$1") . "\" /></a>"', $content);
+    $content = preg_replace('/\[img=?\]*(.*?)(\[\/img)?\]/e', '"<a href=\"$1\" rel=\"lightbox[comments]\"> <img src=\"$1\" style=\"max-width: 360px\" alt=\"" . basename("$1") . "\" /></a>"', $content);
     $content = preg_replace('/\[file=?\]*(.*?)(\[\/file)?\]/e', '"<a href=\"$1\">$1</a>"', $content);
     return $content;
 }
