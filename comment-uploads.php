@@ -21,10 +21,10 @@ $plugin_dir = dirname(__FILE__) . '/';
 if (!file_exists($upload_dir))
 	mkdir($upload_dir);
 if (!file_exists($plugin_dir . 'upload_url.txt') ||  !file_exists($plugin_dir . 'upload_dir.txt')) {
-$fh = fopen($plugin_dir . 'upload_url.txt', 'w') or die("easy-comment-uploads: can't open file");
+$fh = fopen($plugin_dir . 'upload_url.txt', 'w') or die("easy-comment-uploads: can't open file - please check the permissions of your wordpress install.");
 fwrite($fh, $upload_url);
 fclose($fh);
-$fhh = fopen($plugin_dir . 'upload_dir.txt', 'w') or die("easy-comment-uploads: can't open file");
+$fhh = fopen($plugin_dir . 'upload_dir.txt', 'w') or die("easy-comment-uploads: can't open file - please check the permissions of your wordpress install.");
 fwrite($fhh, $upload_dir);
 fclose($fhh);
 }
@@ -38,7 +38,7 @@ if (file_exists($upload_dir . 'upload.php'))
 // Thanks to Trevor Fitzgerald (http://www.trevorfitzgerald.com/) for providing an invaluable example for
 // this regualar expersions code.
 function insert_links($content){
-    $content = preg_replace('/\[img=?\]*(.*?)(\[\/img)?\]/e', '"<a href=\"$1\" rel=\"lightbox[comments]\"> <img src=\"$1\" style=\"max-width: 100%\" alt=\"" . basename("$1") . "\" /></a>"', $content);
+    $content = preg_replace('/\[img=?\]*(.*?)(\[\/img)?\]/e', '"<a href=\"$1\" rel=\"lightbox[comments]\"> <img src=\"$1\" style=\"max-width: 540px\" alt=\"" . basename("$1") . "\" /></a>"', $content);
     $content = preg_replace('/\[file=?\]*(.*?)(\[\/file)?\]/e', '"<a href=\"$1\">$1</a>"', $content);
     return $content;
 }
