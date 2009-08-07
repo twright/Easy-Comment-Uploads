@@ -1,7 +1,8 @@
 <?php
 
+$prefix = time() . "-";
 $target_dir = file_get_contents("upload_dir.txt");
-$target_path = $target_dir . basename( $_FILES['file']['name']);
+$target_path = $target_dir . $prefix . basename( $_FILES['file']['name']);
 $target_url = file_get_contents("upload_url.txt");
 $images_only = false;
 
@@ -11,12 +12,10 @@ else
 		$type = "file";
 
 if ($type == "img" || !$images_only) {
-		if (file_exists($target_path) || false ) {
-			$alert = "A file by the same name already exists, please try renaming.";
-		} else if(!check_uploaded_files())  {
+		if(!check_uploaded_files())  {
 			$alert = "You are attempting to upload a file with a disallowed/unsafe filetype!";
 		} else if (move_uploaded_file($_FILES['file']['tmp_name'], $target_path)) {
-	    $filename = $_FILES["file"]["name"];
+	    $filename = $prefix . $_FILES["file"]["name"];
 	    $filelink = $target_url . $filename;
 	    $filecode = "[" . $type . "]" . $filelink . "[/" . $type . "]";
 		} else {
@@ -28,7 +27,7 @@ if ($type == "img" || !$images_only) {
 //$alert = "test";
 
 function check_uploaded_files() {
-		$blacklist = array(".php", ".phtml", ".php3", ".php4", ".php5", ".php6", ".cgi", ".fcgi", ".htaccess", ".js", ".shtml", ".pl", ".py", ".exe", ".bat", ".sh");  
+		$blacklist = array(".php", ".phtml", ".php3", ".php4", ".php5", ".php6", ".cgi", ".fcgi", ".htaccess", ".js", ".shtml", ".pl", ".py", ".exe", ".bat", ".sh", ".aspx", ".asp");  
 		foreach ($blacklist as $file) {  
 			if(preg_match("/$file$/i", $_FILES['file']['name'])) {  
 					$insecure = true;
