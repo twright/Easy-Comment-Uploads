@@ -2,8 +2,8 @@
 Contributors: Tom Wright, 
 Tags: comments, uploads, images, wpmu
 Requires at least: 2.6.0
-Tested up to: 2.8.3
-Stable tag: 0.17
+Tested up to: 2.8.4
+Stable tag: 0.18
 
 == Description ==
 This plugin allow your visitors to attach images or other file to their comments as easily as possible. I designed it for http://langtreeshout.org . It also adds lightbox code for all inserted images. It has been tested for Wordpress and Wordpress Mu, if anything does not work please just email me at tom.tdw@gmail.com .
@@ -11,6 +11,10 @@ This plugin allow your visitors to attach images or other file to their comments
 If you like it please rate it, give feedback or you can donate.
 
 = Recent Changes =
+
+**0.18**
+ * Initial support for translations.
+ * Improved theme compatibility.
 
 **0.17**
 
@@ -24,7 +28,7 @@ If you like it please rate it, give feedback or you can donate.
 
 **0.14**
 
- * Auto-adding the file links to comment (e.g. no copy and paste).
+ * Auto-adding the file links to comment (i.e. no copy and paste).
  * Much nice user experience.
  * More code cleanup.
  * Blacklist of dangerous file types (this was a serious security problem in old version, please upgrade ASAP).
@@ -38,12 +42,11 @@ If you like it please rate it, give feedback or you can donate.
  
 = Coming soon =
 
- * Options page
- * Moving uploaded files to somewhere more sensible (e.g. uploads/comments on standard Wordpress and the blogs folder for Mu)
- * Internationalisation support including BR_pt translation
- * Uploads for Buddypress wires
- * Increased theme compatibility (testing needed)
- * More UI niceness :-)
+ * Options page.
+ * Moving uploaded files to somewhere more sensible (e.g. uploads/comments on standard Wordpress and the blogs folder for Mu).
+ * New translations including BR_pt, French and German.
+ * Increased theme compatibility (testing needed).
+ * More UI niceness :-) .
 
 *(hopefully I should get round to doing these quite soon, consider it as a rough roadmap to version 1.0)*
 
@@ -62,14 +65,23 @@ The GPLv3 of course :-). You can reuse it, hack it, redistribute it or do whatev
 
 If you need help with the plugin then email me at tom.tdw@gmail.com and I will be more than willing to give any help I can.
 
+= How can I help support the plugin's development? =
+
+I develop the plugin in my free time whilst providing free support for it so if you enjoy using it and would like to support it then any donations would be gratefully received.
+
+If you want to donate then you can do so securely using paypal:
+http://paypal-link.com
+
 = Is it available in my language? =
 
-Currently the plugin is only available in English but in the next version I will be adding i18n support so that anyone is free to translation it, hopefully then it will be available in a wider variety of languages - we already have a BR_pt translation which will be available at that time.
+Currently the plugin is only available in English but in future versions I will be adding i18n support so that anyone is free to translation it, hopefully then it will be available in a wider variety of languages - we already have a BR_pt translation which will be available at that time.
 
 = Is it secure? =
 
-Currently the plugin blacklists unsafe filetypes and is bound by the global php security settings so it should be fairly safe to use. However as with any plugin there is a risk and if the security measures taken by your site are not adequate, then this risk is greatly increased. As always I recommend you keep backups and if you do discover security issues with the plugin please tell me. 
+Currently the plugin blacklists unsafe filetypes and is bound by the global php security settings so it should be fairly safe to use. However as with any plugin there is a risk and if the security measures taken by your site are not adequate, then this risk is greatly increased. As always I recommend you keep backups and if you do discover security issues with the plugin please let me know so I can resolve them as soon as possible.
+
+As with all plugins, new versions include security fixes and resolve other bugs so I always recommend running the latest stable version.
 
 = I have just thought of an amazing feature your plugin should have, what can I do? =
 
-Good for you - send me and email or comment and if I like the idea, I will see whether my coding skills will stretch to making it. If you have a patch or want to contribute then even better.
+Good for you - send me and email or comment and if I like the idea, I will see whether my coding skills will stretch to making it. If you have a patch or want to contribute then even better - just contact me with a brief introduction and I will add you as a contributor to the plugin.

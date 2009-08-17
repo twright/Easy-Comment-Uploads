@@ -4,7 +4,7 @@ Plugin Name: Easy Comment Uploads
 Plugin URI: http://wiki.langtreeshout.org/plugins/commentuploads
 Description: Allow your users to easily upload images in their comments.
 Author: Tom Wright
-Version: 0.16
+Version: 0.17
 Author URI: http://twright.langtreeshout.org/
 */
 
@@ -17,17 +17,22 @@ $upload_dir =  WP_CONTENT_DIR . '/upload/';
 $upload_url = get_option('siteurl') . '/wp-content/upload/';
 $plugin_dir = dirname(__FILE__) . '/';
 
+// Set textdomain for translations (i18n)
+load_plugin_textdomain( 'easy-comment-uploads', $plugin_dir );
+
 // I/O TODO: Reduce I/O to increase performance
 if (!file_exists($upload_dir))
 	mkdir($upload_dir);
+
 if (!file_exists($plugin_dir . 'upload_url.txt') ||  !file_exists($plugin_dir . 'upload_dir.txt')) {
-$fh = fopen($plugin_dir . 'upload_url.txt', 'w') or die("easy-comment-uploads: can't open file - please check the permissions of your wordpress install.");
-fwrite($fh, $upload_url);
-fclose($fh);
-$fhh = fopen($plugin_dir . 'upload_dir.txt', 'w') or die("easy-comment-uploads: can't open file - please check the permissions of your wordpress install.");
-fwrite($fhh, $upload_dir);
-fclose($fhh);
+	$fh = fopen($plugin_dir . 'upload_url.txt', 'w') or die("easy-comment-uploads: can't open file - please check the permissions of your wordpress install.");
+	fwrite($fh, $upload_url);
+	fclose($fh);
+	$fhh = fopen($plugin_dir . 'upload_dir.txt', 'w') or die("easy-comment-uploads: can't open file - please check the permissions of your wordpress install.");
+	fwrite($fhh, $upload_dir);
+	fclose($fhh);
 }
+
 // Remove insecure files left over from old versions
 if (file_exists($upload_dir . 'upload.php'))
 	unlink ($upload_dir . 'upload.php');
@@ -43,8 +48,8 @@ function insert_links($content){
     return $content;
 }
 
-// Inserts an iframe below the comment upload form which allows users to upload
-// files and returns a [img] or [file] link.
+// Inserts an iframe below the comment upload form which allows
+// users to upload files and returns a [img] or [file] link.
 function comment_upload_form(){
     global $plugin_dir;
     @require ($plugin_dir . "form.php");
