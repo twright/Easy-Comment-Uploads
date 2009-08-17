@@ -13,6 +13,7 @@ If you like it please rate it, give feedback or you can donate.
 = Recent Changes =
 
 **0.18**
+
  * Initial support for translations.
  * Improved theme compatibility.
  * General cleanup.
