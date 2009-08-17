@@ -32,12 +32,13 @@ if ($type == "img" || !$images_only) {
 
 // Check upload against blacklist and 
 function check_uploaded_files() {
-	$blacklist = array(".php", ".phtml", ".php3", ".php4", ".php5", ".php6", ".cgi", ".fcgi", ".htaccess", ".js", ".shtml", ".pl", ".py", ".exe", ".bat", ".sh", ".aspx", ".asp");
+	$blacklist = array(".php", ".phtml", ".php3", ".php4", ".php5", ".php6", ".cgi", ".fcgi", ".htaccess", ".js", ".shtml", ".pl", ".py", ".exe", ".bat", ".sh", ".aspx", ".asp", ".sh");
 	foreach ($blacklist as $file)
 		if(preg_match("/$file$/i", $_FILES['file']['name']))
 				return false;
 	return true;
 }
+
 ?>
 
 

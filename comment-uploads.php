@@ -10,7 +10,7 @@ Author URI: http://twright.langtreeshout.org/
 
 // TODO: Find better way of sharing info between scripts
 if( !defined('WP_CONTENT_DIR') )
-    define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
+	define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
 //$upload_dir =  get_option('upload_path') . '/comments/';
 $upload_dir =  WP_CONTENT_DIR . '/upload/';
 //$upload_url = get_option('siteurl') . '/wp-content/uploads/comments/';
@@ -43,16 +43,16 @@ if (file_exists($upload_dir . 'upload.php'))
 // Thanks to Trevor Fitzgerald (http://www.trevorfitzgerald.com/) for providing an invaluable example for
 // this regualar expersions code.
 function insert_links($content){
-    $content = preg_replace('/\[img=?\]*(.*?)(\[\/img)?\]/e', '"<a href=\"$1\" rel=\"lightbox[comments]\"> <img src=\"$1\" style=\"max-width: 360px\" alt=\"" . basename("$1") . "\" /></a>"', $content);
-    $content = preg_replace('/\[file=?\]*(.*?)(\[\/file)?\]/e', '"<a href=\"$1\">$1</a>"', $content);
-    return $content;
+	$content = preg_replace('/\[img=?\]*(.*?)(\[\/img)?\]/e', '"<a href=\"$1\" rel=\"lightbox[comments]\"> <img src=\"$1\" style=\"max-width: 360px\" alt=\"" . basename("$1") . "\" /></a>"', $content);
+	$content = preg_replace('/\[file=?\]*(.*?)(\[\/file)?\]/e', '"<a href=\"$1\">$1</a>"', $content);
+	return $content;
 }
 
 // Inserts an iframe below the comment upload form which allows
 // users to upload files and returns a [img] or [file] link.
 function comment_upload_form(){
-    global $plugin_dir;
-    @require ($plugin_dir . "form.php");
+	global $plugin_dir;
+	@require ($plugin_dir . "form.php");
 }
 
 // Register code with wordpress
