@@ -3,7 +3,7 @@ Contributors: Tom Wright
 Tags: comments, uploads, images, wpmu
 Requires at least: 2.6.0
 Tested up to: 2.8.4
-Stable tag: 0.18
+Stable tag: 0.19
 
 == Description ==
 This plugin allow your visitors to attach images or other file to their comments as easily as possible. I designed it for http://langtreeshout.org . It also adds lightbox code for all inserted images. It has been tested for Wordpress and Wordpress Mu, if anything does not work please just email me at tom.tdw@gmail.com .
@@ -11,6 +11,10 @@ This plugin allow your visitors to attach images or other file to their comments
 If you like it please rate it, give feedback or you can donate.
 
 = Recent Changes =
+
+**0.19**
+
+ * pt_BR translation by Claudio Miranda (http://www.claudius.com.br/) 
 
 **0.18**
 
@@ -77,6 +81,9 @@ If you want to donate then you can do so securely using paypal:
 = Is it available in my language? =
 
 Currently the plugin is only available in English but anyone can translate it using Wordpress's standard tools: http://codex.wordpress.org/Translating_WordPress . If you translate the plugin then please email me the PO files so that other users can benefit from them as well.
+
+Alternativly you can translate the plugin online using an easy web interface on launchpad:
+https://translations.edge.launchpad.net/easy-comment-uploads/trunk
 
 = Is it secure? =
 
