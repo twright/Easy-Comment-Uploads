@@ -71,7 +71,7 @@ function comment_upload_form(){
 
 // Set textdomain for translations (i18n)
 function textdomain_easy_comment_uploads () {
-    load_plugin_textdomain( 'easy-comment-uploads', 'wp-content/plugins/easy-comment-uploads/languages', 'easy-comment-uploads/languages' );
+    load_plugin_textdomain( 'easy-comment-uploads', 'wp-content/plugins/easy-comment-uploads/', 'easy-comment-uploads/' );
 }
 
 // Register code with wordpress
