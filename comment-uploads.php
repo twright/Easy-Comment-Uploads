@@ -57,7 +57,7 @@ function comment_upload_form(){
 		<h3 style='clear: both'>". __('Upload files', 'easy-comment-uploads') . ":</h3>
         <p style='margin-top: 4px'>" . __('You can include images or files in your comment by selecting them below. Once you select a file, it will be uploaded and a link to it added to your comment. You can upload as many images or files as you like and they will all be added to your comment.', 'easy-comment-uploads') . "</p>
 
-        <form target='hiddenframe' enctype='multipart/form-data' action='" . get_option('siteurl') . "'/wp-content/plugins/easy-comment-uploads/upload.php' method='POST' name='uploadform' id='uploadform'>
+        <form target='hiddenframe' enctype='multipart/form-data' action='" . get_option('siteurl') . "/wp-content/plugins/easy-comment-uploads/upload.php' method='POST' name='uploadform' id='uploadform'>
         <p style='text-align: center; margin-bottom: -15px'>
     " . __('Select File', 'easy-comment-uploads') . ":
     <input type='file' name='file' id='fileField' onchange='document.uploadform.submit()' /></p>
