@@ -4,7 +4,7 @@ Plugin Name: Easy Comment Uploads
 Plugin URI: http://wiki.langtreeshout.org/plugins/commentuploads
 Description: Allow your users to easily upload images in their comments.
 Author: Tom Wright
-Version: 0.18
+Version: 0.19
 Author URI: http://twright.langtreeshout.org/
 */
 
@@ -16,9 +16,6 @@ $upload_dir =  WP_CONTENT_DIR . '/upload/';
 //$upload_url = get_option('siteurl') . '/wp-content/uploads/comments/';
 $upload_url = get_option('siteurl') . '/wp-content/upload/';
 $plugin_dir = dirname(__FILE__) . '/';
-
-// Set textdomain for translations (i18n)
-load_plugin_textdomain( 'easy-comment-uploads', $plugin_dir );
 
 // I/O TODO: Reduce I/O to increase performance
 if (!file_exists($upload_dir))
@@ -52,11 +49,34 @@ function insert_links($content){
 // users to upload files and returns a [img] or [file] link.
 function comment_upload_form(){
 	global $plugin_dir;
-	@require ($plugin_dir . "form.php");
+    echo "
+		<!-- Easy Comment Uploads for Wordpress by Tom Wright: http://wordpress.org/extend/plugins/easy-comment-uploads/ -->
+
+		</form>
+
+		<h3 style='clear: both'>". __('Upload files', 'easy-comment-uploads') . ":</h3>
+        <p style='margin-top: 4px'>" . __('You can include images or files in your comment by selecting them below. Once you select a file, it will be uploaded and a link to it added to your comment. You can upload as many images or files as you like and they will all be added to your comment.', 'easy-comment-uploads') . "</p>
+
+        <form target='hiddenframe' enctype='multipart/form-data' action='" . get_option('siteurl') . "'/wp-content/plugins/easy-comment-uploads/upload.php' method='POST' name='uploadform' id='uploadform'>
+        <p style='text-align: center; margin-bottom: -15px'>
+    " . __('Select File', 'easy-comment-uploads') . ":
+    <input type='file' name='file' id='fileField' onchange='document.uploadform.submit()' /></p>
+    <p id='uploadedfile'>
+    <label></label>
+    </p>
+    <iframe name='hiddenframe' style='display:none' >Loading...</iframe>
+
+	<!-- End of Easy Comment Uploads -->";
+}
+
+// Set textdomain for translations (i18n)
+function textdomain_easy_comment_uploads () {
+    load_plugin_textdomain( 'easy-comment-uploads', 'wp-content/plugins/easy-comment-uploads/languages', 'easy-comment-uploads/languages' );
 }
 
 // Register code with wordpress
 add_filter('comment_text', 'insert_links');
 add_action('comment_form', 'comment_upload_form');
+add_action('init', 'textdomain_easy_comment_uploads'); 
 
 ?>
