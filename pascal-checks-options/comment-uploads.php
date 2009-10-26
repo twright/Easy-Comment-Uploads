@@ -4,7 +4,7 @@ Plugin Name: Easy Comment Uploads
 Plugin URI: http://wiki.langtreeshout.org/plugins/commentuploads
 Description: Allow your users to easily upload images in their comments.
 Author: Tom Wright
-Version: 0.22
+Version: 0.21
 Author URI: http://twright.langtreeshout.org/
 */
 
@@ -49,6 +49,8 @@ function insert_links($content){
 // users to upload files and returns a [img] or [file] link.
 function comment_upload_form(){
 	global $plugin_dir;
+        $images_only = get_option('ecu-images_only');
+
     echo "
 		<!-- Easy Comment Uploads for Wordpress by Tom Wright: http://wordpress.org/extend/plugins/easy-comment-uploads/ -->
 
@@ -57,7 +59,7 @@ function comment_upload_form(){
 		<h3 style='clear: both'>". __('Upload files', 'easy-comment-uploads') . ":</h3>
         <p style='margin-top: 4px'>" . __('You can include images or files in your comment by selecting them below. Once you select a file, it will be uploaded and a link to it added to your comment. You can upload as many images or files as you like and they will all be added to your comment.', 'easy-comment-uploads') . "</p>
 
-        <form target='hiddenframe' enctype='multipart/form-data' action='" . get_option('siteurl') . "/wp-content/plugins/easy-comment-uploads/upload.php' method='POST' name='uploadform' id='uploadform'>
+        <form target='hiddenframe' enctype='multipart/form-data' action='" . get_option('siteurl') . "/wp-content/plugins/easy-comment-uploads/upload.php?images_only=$images_only' method='POST' name='uploadform' id='uploadform'>
         <p style='text-align: center; margin-bottom: -15px'>
     " . __('Select File', 'easy-comment-uploads') . ":
     <input type='file' name='file' id='fileField' onchange='document.uploadform.submit()' /></p>
@@ -74,7 +76,45 @@ function textdomain_easy_comment_uploads () {
     load_plugin_textdomain( 'easy-comment-uploads', 'wp-content/plugins/easy-comment-uploads/', 'easy-comment-uploads/' );
 }
 
+function comment_options() {
+    add_options_page('Easy Comment Uploads options', 'Easy Comment Uploads', 8, __FILE__, 'comment_options_page');
+}
+
+function comment_options_page() {
+    if (isset($_POST['submitted']))
+    {
+        check_admin_referer('easy-comment-uploads');
+        $images_only = !isset($_POST['images_only'])? 'off': 'on';
+        update_option('ecu-images_only', $images_only);
+
+        $msg_status = 'Easy Comment Uploads options saved.';
+
+        _e('<div id="message" class="updated fade"><p>' . $msg_status . '</p></div>');
+    }
+
+    $actionurl=$_SERVER['REQUEST_URI'];
+    $nonce=wp_create_nonce( 'easy-comment-uploads');
+    $images_only = (get_option('ecu-images_only')=='on') ? 'checked':'';
+    
+    echo <<<END
+        <div class="wrap" style="max-width:950px !important;">
+        <h2>Easy Comment Uploads</h2>
+
+        <form name="ecuform" action="$action_url" method="post">
+            <input type="hidden" name="submitted" value="1" />
+            <input type="hidden" id="_wpnonce" name="_wpnonce" value="$nonce" />
+
+            <div><input id="images_only" type="checkbox" name="images_only" $images_only />
+            <label for="images_only">Only allow images to be uploaded</label></div>
+
+            <div class="submit"><input type="submit" name="Submit" value="Update options" /></div>
+        </form>
+            
+END;
+}
+
 // Register code with wordpress
+add_action('admin_menu', 'comment_options');
 add_filter('comment_text', 'insert_links');
 add_action('comment_form', 'comment_upload_form');
 add_action('init', 'textdomain_easy_comment_uploads'); 
