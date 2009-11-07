@@ -4,7 +4,7 @@ Plugin Name: Easy Comment Uploads
 Plugin URI: http://wiki.langtreeshout.org/plugins/commentuploads
 Description: Allow your users to easily upload images in their comments.
 Author: Tom Wright
-Version: 0.21
+Version: 0.25
 Author URI: http://twright.langtreeshout.org/
 */
 
