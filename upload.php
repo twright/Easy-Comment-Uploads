@@ -1,105 +1,108 @@
+<!doctype html5>
+<html>
+<head>
+<script type="text/javascript">
+// Return true if there is any text in the comment field
+function comment_length () {
+	if (parent.document.getElementById("comment"))
+		return parent.document.getElementById("comment").value.length;
+	else if (parent.document.getElementById("comment-p1"))
+		return parent.document.getElementById("comment-p1").value.length;
+	else
+		return parent.document.forms["commentform"].comment.value;
+}
+
+// Write txt to comment field
+function write_comment (text) {
+	// Prepend a linebreak code if it is not the first line
+	if (comment_length() > 0)
+		text = "\n" + text;
+
+	// Attempt to write text to comment field (wherever it may be)
+	if (parent.document.getElementById("comment"))
+		parent.document.getElementById("comment").value += text;
+	else if (parent.document.getElementById("comment-p1"))
+		parent.document.getElementById("comment-p1").value += text;
+	else
+		parent.document.forms["commentform"].comment.value += text;
+}
+</script>
+</head>
+<body>
 <?php
+	// Load saved info from text files
+	$target_dir = file_get_contents ("upload_dir.txt");
+	$target_url = file_get_contents ("upload_url.txt");
+	$images_only = (int) file_get_contents ("images_only.txt");
 
-// Load saved info from text files
-$target_dir = file_get_contents("upload_dir.txt");
-$target_url = file_get_contents("upload_url.txt");
+	$target_path = find_unique_target ($target_dir .basename($_FILES['file']['name']));
+	$target_name = basename ($target_path);
 
-// Calculate time and target for images
-$prefix = time() . "-";
-$target_path = $target_dir . $prefix . basename( $_FILES['file']['name']);
-$alert = "";
+	// write_js ("alert ('$images_only')");
 
-// Default values
-$filecode = "";
-$filelink = "";
-$filename = "";
+	// Default values
+	$filecode = "";
+	$filelink = "";
 
-// Only allow images to be uploaded
-$images_only = false;
-if ($_GET['images_only'] == 'on') {
-    $images_only = true;
-}
+	// Detect whether the uploaded file is an image
+	$is_image = preg_match ('/(jpeg|png|gif)/i', $_FILES['file']['type']);
+	$type = ($is_image) ? "img" : "file";
 
-// Detect whether the uploaded file is an image
-if (eregi('jpeg', $_FILES['file']['type']) || eregi('png', $_FILES['file']['type']) || eregi('gif', $_FILES['file']['type']))
-    $type = "img";
-else
-    $type = "file";
+	if (!$is_image && $images_only) {
+		$alert = "Sorry, you can only upload images.";
+	} else if (filetype_blacklisted ()) {
+		$alert = "You are attempting to upload a file with a disallowed/unsafe filetype!";
+	} else if (move_uploaded_file ($_FILES['file']['tmp_name'], $target_path)) {
+		$filelink = $target_url . $target_name;
+		$filecode = "[$type]$filelink" . "[/$type]";
 
-if ($type == "img" || !$images_only) {
-// Check filetypes against blacklist
-    if(!check_uploaded_files()) {
-        $alert = "You are attempting to upload a file with a disallowed/unsafe filetype!";
-    // Move files from tmp and generate links + insert codes
-    } else if (move_uploaded_file($_FILES['file']['tmp_name'], $target_path)) {
-            $filename = $prefix . $_FILES["file"]["name"];
-            $filelink = $target_url . $filename;
-            $filecode = "[" . $type . "]" . $filelink . "[/" . $type . "]";
-        // Catchall for errors
-        } else $alert = "There was an error uploading the file, please try again!";
-// Block non-images if they are disabled
-} else $alert = "Sorry, you can only upload images.";
+		// Add the filecode to the comment form
+		write_js ("write_comment (\"$filecode\");");
 
-// Check upload against blacklist and 
-function check_uploaded_files() {
-    $blacklist = array(".php", ".html", ".php3", ".php4", ".php5", ".php6", ".cgi", ".fcgi", ".htaccess", ".js", ".shtml", ".pl", ".py", ".exe", ".bat", ".aspx", ".asp", ".sh");
-    foreach ($blacklist as $ext) {
-        $extlen = strlen($ext);
-        $strlen = strlen($_FILES['file']['name']);
+		// Post info below upload form
+		write_html_form ("<div style='text-align: center; padding: 10px 0 17px 0'><a href='$filelink'>$target_name</a><br />$filecode</div>");
+		
+		if ($is_image) {
+			write_html_form ("<a href='$filelink' rel='lightbox[new]'><img style='max-width: 60%; max-height: 200px; clear: both; padding: 0 20% 0 20%' src='$filelink' /></a><br />");
+		}
+	} else {
+		$alert = "There was an error uploading the file, please try again!";
+	}
 
-        if (substr($_FILES['file']['name'], ($strlen - $extlen)) == $ext) {
-            return false;
-        }
-    }
-    return true;
-}
+	if (isset ($alert)) {
+		write_js ("alert (\"$alert\");");
+	}
+
+	// Check upload against blacklist and return safe unless it matches
+	function filetype_blacklisted () {
+		return preg_match ("/(\\.(.?html\\d?|php\\d?|f?cgi|htaccess|p(er)?l|py(thon)?|exe|bat|aspx?|sh|js)|^\\.|~$)/i", $_FILES['file']['name']);
+	}
+	
+	// Write script as js to the page
+	function write_js ($script) {
+		echo "<script type=\"text/javascript\">$script\n</script>\n";
+	}
+	
+	function write_html_form ($html) {
+		write_js ("parent.document.getElementById('uploadedfile').innerHTML = \"$html\" + parent.document.getElementById('uploadedfile').innerHTML");
+	}
+	
+	function find_unique_target ($prototype) {
+		if (!file_exists ("$prototype")) {
+			return $prototype;
+		} else {
+			$i = 1;
+			$prototype_parts = pathinfo ($prototype);
+			$ext = $prototype_parts ['extension'];
+			$dir = $prototype_parts ['dirname'];
+			$name = $prototype_parts ['filename'];
+			while (file_exists ("$dir/$name-$i.$ext")) {
+				++$i;
+			}
+			return "$dir/$name-$i.$ext";
+		}
+	}
 
 ?>
-
-
-<script type="text/javascript">
-    // Get variable values from php
-    alert_msg = "<?php echo $alert ?>";
-    filecode = "<?php echo $filecode ?>";
-    filelink = "<?php echo $filelink ?>";
-    filename = "<?php echo $filename ?>";
-
-    // Display info for debug
-    // alert(filecode);
-
-    // Return true if there is any text in the comment field
-    function comment_length () {
-        if (parent.document.getElementById("comment"))
-            return parent.document.getElementById("comment").value.length;
-        else if (parent.document.getElementById("comment-p1"))
-            return parent.document.getElementById("comment-p1").value.length;
-        else
-            return parent.document.forms["commentform"].comment.value;
-    }
-
-    // Write txt to comment field
-    function write_comment (text) {
-        // Prepend a linebreak code if it is not the first line
-        if (comment_length() > 0)
-            text = "\n" + text;
-
-        // Attempt to write text to comment field (wherever it may be)
-        if (parent.document.getElementById("comment"))
-            parent.document.getElementById("comment").value += text;
-        else if (parent.document.getElementById("comment-p1"))
-            parent.document.getElementById("comment-p1").value += text;
-        else
-            parent.document.forms["commentform"].comment.value += text;
-    }
-
-    // Display any alert set.
-    if (alert_msg)
-        alert(alert_msg);
-
-    // Add the filecode to the comment form
-    write_comment(filecode);
-
-    // If successful post info below upload form
-    if (filename && filelink && filecode)
-        parent.document.getElementById('uploadedfile').innerHTML += '<br><a href="' + filelink + '">' + filename + '</a> : ' + filecode;
-</script>
+</body>
+</html>

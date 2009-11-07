@@ -12,9 +12,20 @@ If you like it please rate it, give feedback or you can donate.
 
 = Recent Changes =
 
+**0.30**
+
+ * Much improved options page.
+ * Options for choosing which users can upload comments.
+ * Much nicer formatting for embedded images.
+ * Pretty preview for uploaded images.
+ * New, more "human friendly" naming scheme.
+ * Images only option now transfered server side (so no spoofing).
+ * Automated uninstall with cleanup (all file and comments will be saved).
+
 **0.25**
 
 Changes by Pascal de Vink ( www.finalist.com ):
+
  * Dutch translation.
  * Options page.
  * Filetype checking improvments.

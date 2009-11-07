@@ -1,1 +1,1 @@
-/home/tom/www/wordpress/wp-content/upload/
+/home/tom/www/wordpress2/wp-content/upload/
