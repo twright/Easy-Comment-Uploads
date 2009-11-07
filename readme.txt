@@ -64,7 +64,6 @@ Changes by Pascal de Vink ( www.finalist.com ):
  
 = Coming soon =
 
- * Options page.
  * Moving uploaded files to somewhere more sensible (e.g. uploads/comments on standard Wordpress and the blogs folder for Mu).
  * New translations including BR_pt, French and German.
  * Increased theme compatibility (testing needed).
