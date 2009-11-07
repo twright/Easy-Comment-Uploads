@@ -6,6 +6,7 @@ Tested up to: 2.8.5
 Stable tag: 0.30
 
 == Description ==
+
 This plugin allow your visitors to attach images or other file to their comments as easily as possible. I designed it for http://langtreeshout.org . It also adds lightbox code for all inserted images. It has been tested for Wordpress and Wordpress Mu, if anything does not work please just email me at tom.tdw@gmail.com .
 
 If you like it please rate it, give feedback or you can donate.
@@ -85,6 +86,7 @@ Changes by Pascal de Vink ( www.finalist.com ):
 For more updates about the plugin or to ask questions, follow me on Twitter: http://twitter.com/tomdwright
 
 == Installation ==
+
 Just add to /wp-content/plugins and activate or use the automatic plugin installer. If you want to use it in Wordpress Mu for all blogs just copy comment-uploads.php to /wp-content/mu-plugins and leave the rest in place or use the new activate site wide option for an much simpler installation. 
 
 == Frequently Asked Questions ==
