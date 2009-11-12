@@ -4,7 +4,7 @@ Plugin Name: Easy Comment Uploads
 Plugin URI: http://wiki.langtreeshout.org/plugins/commentuploads
 Description: Allow your users to easily upload images in their comments.
 Author: Tom Wright
-Version: 0.30
+Version: 0.31
 Author URI: http://twright.langtreeshout.org/
 */
 
@@ -16,18 +16,21 @@ $upload_url = get_option('siteurl') . '/wp-content/upload/';
 $plugin_dir = dirname(__FILE__) . '/';
 $images_only = (get_option ('ecu_images_only') || false);
 $permission_required = get_option ('ecu_permission_required');
+$settings_files_dir = (file_exists ("/tmp") ? "/tmp/" : "/temp") . "easy_comment_uploads/"; 
 
 // Determine whether all settings files exist
 $settings_files_exist =
-	!file_exists ($plugin_dir . 'upload_url.txt') 
-	|| !file_exists ($plugin_dir . 'upload_dir.txt')
-	|| !file_exists ($plugin_dir . 'upload_images.txt');
+	!file_exists ($settings_files_dir . 'upload_url.txt') 
+	|| !file_exists ($settings_files_dir . 'upload_dir.txt')
+	|| !file_exists ($settings_files_dir . 'upload_images.txt');
 
 // Update any files that do not already exist
 // TODO: Reduce I/O to increase performance
-ecu_update_settings_files ();
 if (!file_exists ($upload_dir))
 	mkdir ($upload_dir);
+if (!file_exists ($settings_files_dir))
+	mkdir ($settings_files_dir);
+ecu_update_settings_files ();
 
 // Remove insecure files left over from old versions
 if (file_exists ($upload_dir . 'upload.php'))
@@ -52,7 +55,7 @@ function ecu_upload_form ()
 	global $images_only;
 	global $permission_required;
 	
-	if (!$permission_required || !isset ($permission_required)
+	if ($permission_required == "none" || !$permission_required
 	    || current_user_can ("$permission_required")) {
 		echo "
 			<!-- Easy Comment Uploads for Wordpress by Tom Wright: http://wordpress.org/extend/plugins/easy-comment-uploads/ -->
@@ -77,7 +80,8 @@ function ecu_upload_form ()
 
 // Set textdomain for translations (i18n)
 function textdomain_easy_comment_uploads () {
-	load_plugin_textdomain( 'easy-comment-uploads', 'wp-content/plugins/easy-comment-uploads/', 'easy-comment-uploads/' );
+	load_plugin_textdomain ('easy-comment-uploads'
+		,'wp-content/plugins/easy-comment-uploads/', 'easy-comment-uploads/');
 }
 
 // Add options menu item (restricted to level_10 users)
@@ -109,7 +113,8 @@ function ecu_options_page () {
 
 		// Updated visuals
 		$msg_status = __('Easy Comment Uploads options saved.');
-		echo '<div id="message" class="updated fade"><p>' . $msg_status . '</p></div>';
+		echo '<div id="message" class="updated fade"><p>' . $msg_status
+			. '</p></div>';
 
 		// Force update settings text files
 		ecu_update_settings_files (true);
@@ -154,7 +159,6 @@ function ecu_options_page () {
 
 			<div class="submit"><input type="submit" name="Submit" value="Update options" /></div>
 		</form>
-			
 END;
 }
 
@@ -163,23 +167,23 @@ function ecu_update_settings_files ($force = false)
 	global $settings_files_exist;
 	global $images_only;
 	global $upload_dir;
-	global $plugin_dir;
+	global $settings_files_dir;
 	global $upload_url;
 
 	$error_string = "easy-comment-uploads: can't open file - please check the permissions of your wordpress install.";
 
 	if ($settings_files_exist || $force) {
-		$upload_url_file = fopen ($plugin_dir . 'upload_url.txt', 'w')
+		$upload_url_file = fopen ($settings_files_dir . 'upload_url.txt', 'w')
 		    or die ($error_string);
 		fwrite ($upload_url_file, $upload_url);
 		fclose ($upload_url_file);
 
-		$upload_dir_file = fopen ($plugin_dir . 'upload_dir.txt', 'w')
+		$upload_dir_file = fopen ($settings_files_dir . 'upload_dir.txt', 'w')
 		    or die($error_string);
 		fwrite ($upload_dir_file, $upload_dir);
 		fclose ($upload_dir_file);
 
-		$images_only_file = fopen ($plugin_dir . 'images_only.txt', 'w') 
+		$images_only_file = fopen ($settings_files_dir . 'images_only.txt', 'w') 
 		    or die ($error_string);
 		fwrite ($images_only_file, (int) $images_only);
 		fclose ($images_only_file);
