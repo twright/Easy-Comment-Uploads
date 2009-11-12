@@ -15,7 +15,7 @@ If you like it please rate it, give feedback or you can donate.
 
 **0.31**
 
- * Temp files are now stores in /tmp .
+ * Temp files are now stored in /tmp .
  * Smart auto-insertion of new lines after auto-added links.
  * Fixes bug with reallowing all users to upload.
 
