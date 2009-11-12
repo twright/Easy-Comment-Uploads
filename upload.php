@@ -28,8 +28,6 @@
 
 		// Write txt to comment field
 		function write_comment (text) {
-			alert(comment_ends_newline ());
-
 			// Append newline to text (for easier user comment)
 			text += "\n";
 
@@ -131,4 +129,4 @@
 
 		?>
 	</body>
-</html>
+</html>@B*Ru$^p3MSY
