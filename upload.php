@@ -51,7 +51,7 @@
 		<?php
 		// Auto-detection of Temp settings folder
 		$settings_files_dir 
-			= (file_exists ("/tmp") ? "/tmp/" : "/temp") . "easy_comment_uploads/"; 
+			= (file_exists ("/tmp") ? "/tmp/" : "/temp/") . "easy_comment_uploads/"; 
 		
 		// Load saved info from text files
 		$target_dir = file_get_contents ($settings_files_dir . "/upload_dir.txt");
@@ -129,4 +129,4 @@
 
 		?>
 	</body>
-</html>@B*Ru$^p3MSY
+</html>

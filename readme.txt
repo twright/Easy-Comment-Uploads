@@ -3,7 +3,7 @@ Contributors: Tom Wright
 Tags: comments, uploads, images, wpmu
 Requires at least: 2.6.0
 Tested up to: 2.8.5
-Stable tag: 0.31
+Stable tag: 0.32
 
 == Description ==
 
