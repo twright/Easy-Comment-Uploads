@@ -1,9 +1,9 @@
 === Easy Comment Uploads ===
-Contributors: Tom Wright 
+Contributors: Tom Wright
 Tags: comments, uploads, images, wpmu
 Requires at least: 2.6.0
-Tested up to: 2.8.5
-Stable tag: 0.32
+Tested up to: 2.9.2
+Stable tag: 0.50
 
 == Description ==
 
@@ -12,6 +12,19 @@ This plugin allow your visitors to attach images or other file to their comments
 If you like it please rate it, give feedback or you can donate.
 
 = Recent Changes =
+
+**0.50**
+
+ * Ground-up rewrite of most of the plugin.
+ * Removed temporary files.
+ * No longer broken on Windows Server.
+ * Can now be used in other plugins.
+ * Uses the standard Wordpress upload directories.
+ * Much improved nonce based security checks.
+ * New option to limit size of uploaded files.
+ * Much lighter design.
+
+(Thanks to http://www.justin-klein.com/ for help and suggestions).
 
 **0.31**
 
@@ -114,14 +127,16 @@ If you want to donate then you can do so securely using paypal:
 
 = Is it available in my language? =
 
-Currently the plugin is only available in English but anyone can translate it using Wordpress's standard tools: http://codex.wordpress.org/Translating_WordPress . If you translate the plugin then please email me the PO files so that other users can benefit from them as well.
+Currently the plugin is only available in English and a few other languages but anyone can translate it using Wordpress's standard tools: http://codex.wordpress.org/Translating_WordPress . If you translate the plugin then please email me the PO files so that other users can benefit from them as well.
 
-Alternativly you can translate the plugin online using an easy web interface on launchpad:
+Alternatively you can translate the plugin online using an easy web interface on launchpad:
 https://translations.edge.launchpad.net/easy-comment-uploads/trunk
 
 = Is it secure? =
 
 Currently the plugin blacklists unsafe filetypes and is bound by the global php security settings so it should be fairly safe to use. However as with any plugin there is a risk and if the security measures taken by your site are not adequate, then this risk is greatly increased. As always I recommend you keep backups and if you do discover security issues with the plugin please let me know so I can resolve them as soon as possible.
+
+Since version 0.50, it includes new security features including checking to domain of the referrer and allowing you to set a filesize limit.
 
 As with all plugins, new versions include security fixes and resolve other bugs so I always recommend running the latest stable version.
 

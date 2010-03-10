@@ -17,6 +17,7 @@
 				return parent.document.forms["commentform"].comment.value.length;
 		}
 
+		// Return true if comment ends in a new newline
 		function comment_ends_newline () {
 			if (parent.document.getElementById("comment"))
 				return (parent.document.getElementById("comment").value).endsWith("\n");
@@ -49,20 +50,28 @@
 
 	<body>
 		<?php
-		// Auto-detection of Temp settings folder
-		$settings_files_dir 
-			= (file_exists ("/tmp") ? "/tmp/" : "/temp/") . "easy_comment_uploads/"; 
-		
-		// Load saved info from text files
-		$target_dir = file_get_contents ($settings_files_dir . "/upload_dir.txt");
-		$target_url = file_get_contents ($settings_files_dir . "upload_url.txt");
-		$images_only = (int) file_get_contents ($settings_files_dir . "images_only.txt");
+		require ('../../../wp-blog-header.php');
 
-		$target_path = find_unique_target ($target_dir .basename($_FILES['file']['name']));
+		// Check referer
+		wp_verify_nonce ($_REQUEST ['_wpnonce'], 'ecu_upload_form')
+			|| write_js ("alert ('Invalid Referer')")
+			|| die ('Invalid referer');
+		
+		// Get needed info
+		$target_dir = ecu_upload_dir_path ();
+		$target_url = ecu_upload_dir_url ();
+		$images_only = get_option ('ecu_images_only');
+		$max_file_size = get_option ('ecu_max_file_size');
+
+		if (!file_exists ($target_dir))
+			mkdir ($target_dir);
+
+		$target_path = find_unique_target ($target_dir 
+			. basename($_FILES['file']['name']));
 		$target_name = basename ($target_path);
 
 		// Debugging message example
-		// write_js ("alert ('$target_dir')");
+//		write_js ("alert ('$target_url')");
 
 		// Default values
 		$filecode = "";
@@ -76,6 +85,10 @@
 			$alert = "Sorry, you can only upload images.";
 		} else if (filetype_blacklisted ()) {
 			$alert = "You are attempting to upload a file with a disallowed/unsafe filetype!";
+		} else if ($max_file_size != 0 && $_FILES['file']['size']/1024 > $max_file_size) {
+			$alert = "The file you've uploaded is too big (" 
+				. round($_FILES['file']['size']/1024, 1) 
+				. "KiB).  Please choose a smaller image and try again.";
 		} else if (move_uploaded_file ($_FILES['file']['tmp_name'], $target_path)) {
 			$filelink = $target_url . $target_name;
 			$filecode = "[$type]$filelink" . "[/$type]";
@@ -120,9 +133,7 @@
 				$ext = $prototype_parts ['extension'];
 				$dir = $prototype_parts ['dirname'];
 				$name = $prototype_parts ['filename'];
-				while (file_exists ("$dir/$name-$i.$ext")) {
-					++$i;
-				}
+				while (file_exists ("$dir/$name-$i.$ext")) { ++$i; }
 				return "$dir/$name-$i.$ext";
 			}
 		}
