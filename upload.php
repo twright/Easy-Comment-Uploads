@@ -97,10 +97,10 @@
 			write_js ("write_comment (\"$filecode\");");
 
 			// Post info below upload form
-			write_html_form ("<div style='text-align: center; padding: 10px 0 17px 0'><a href='$filelink'>$target_name</a><br />$filecode</div>");
+			write_html_form ("<div class='ecu_preview_file'><a href='$filelink'>$target_name</a><br />$filecode</div>");
 			
 			if ($is_image) {
-				write_html_form ("<a href='$filelink' rel='lightbox[new]'><img style='max-width: 60%; max-height: 200px; clear: both; padding: 0 20% 0 20%' src='$filelink' /></a><br />");
+				write_html_form ("<a href='$filelink' rel='lightbox[new]'><img class='ecu_preview_img' src='$filelink' /></a><br />");
 			}
 		} else {
 			$alert = "There was an error uploading the file, please try again!";
@@ -121,7 +121,7 @@
 		}
 		
 		function write_html_form ($html) {
-			write_js ("parent.document.getElementById('uploadedfile').innerHTML = \"$html\" + parent.document.getElementById('uploadedfile').innerHTML");
+			write_js ("parent.document.getElementById('ecu_preview').innerHTML = \"$html\" + parent.document.getElementById('ecu_preview').innerHTML");
 		}
 		
 		function find_unique_target ($prototype) {

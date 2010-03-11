@@ -3,7 +3,7 @@ Contributors: Tom Wright
 Tags: comments, uploads, images, wpmu
 Requires at least: 2.6.0
 Tested up to: 2.9.2
-Stable tag: 0.50
+Stable tag: 0.51
 
 == Description ==
 
@@ -12,6 +12,11 @@ This plugin allow your visitors to attach images or other file to their comments
 If you like it please rate it, give feedback or you can donate.
 
 = Recent Changes =
+
+**0.51**
+
+ * Slightly more failsafe plugin url function.
+ * Separated CSS into separate file.
 
 **0.50**
 
@@ -136,7 +141,7 @@ https://translations.edge.launchpad.net/easy-comment-uploads/trunk
 
 Currently the plugin blacklists unsafe filetypes and is bound by the global php security settings so it should be fairly safe to use. However as with any plugin there is a risk and if the security measures taken by your site are not adequate, then this risk is greatly increased. As always I recommend you keep backups and if you do discover security issues with the plugin please let me know so I can resolve them as soon as possible.
 
-Since version 0.50, it includes new security features including checking to domain of the referrer and allowing you to set a filesize limit.
+Since version 0.50, it includes new security features including checking the domain of the referrer and allowing you to set a filesize limit.
 
 As with all plugins, new versions include security fixes and resolve other bugs so I always recommend running the latest stable version.
 

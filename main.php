@@ -4,11 +4,9 @@ Plugin Name: Easy Comment Uploads
 Plugin URI: http://wordpress.org/extend/plugins/easy-comment-uploads/
 Description: Allow your users to easily upload images and files in their comments.
 Author: Tom Wright
-Version: 0.50
+Version: 0.51
 Author URI: http://twright.langtreeshout.org/
 */
-
-ecu_initial_options ();
 
 // Replaces [img] tags in comments with linked images (with lightbox support)
 // Accepts either [img]image.png[/img] or [img=image.png]
@@ -16,21 +14,22 @@ ecu_initial_options ();
 // Thanks to Trevor Fitzgerald (http://www.trevorfitzgerald.com/) for providing an invaluable example for
 // this regualar expersions code.
 function ecu_insert_links ($s) {
-	 $s = preg_replace('/\[img=?\]*(.*?)(\[\/img)?\]/e', '"<a href=\"$1\" rel=\"lightbox[comments]\"> <img class=\"ecu_images\" src=\"$1\" style=\"max-height: 250px; max-width: 360px; padding: 5px 0 5px 0\" alt=\"" . basename("$1") . "\" /></a>"', $s);
-	$s = preg_replace('/\[file=?\]*(.*?)(\[\/file)?\]/e', '"<a href=\"$1\">$1</a>"', $s);
+	 $s = preg_replace('/\[img\](.*?)\[\/img\]/', '<a href="$1" rel="lightbox[comments]"> <img class="ecu_images" src="$1" /></a>', $s);
+	$s = preg_replace('/\[file\](.*?)\[\/file\]/', '<a href="$1">$1</a>', $s);
 	return $s;
 }
 
-function ecu_upload_url () {
-	return get_option ('siteurl') 
-		. '/wp-content/plugins/easy-comment-uploads/upload.php';
+// Get url of plugin
+function ecu_plugin_url () {
+	return plugins_url ('easy-comment-uploads/');
 }
 
 // Core upload form
 function ecu_upload_form_core ($prompt='Select File: ') {
 	echo "
 	<form target='hiddenframe' enctype='multipart/form-data'
-	action='" . ecu_upload_url () . "' method='POST' name='uploadform'
+	action='" . ecu_plugin_url () . 'upload.php' 
+	.  "' method='POST' name='uploadform'
 	id='uploadform' style='text-align : center'>
 		" . wp_nonce_field ('ecu_upload_form') . "
 		<label for='file' name='prompt'>$prompt</label>
@@ -45,7 +44,7 @@ function ecu_upload_form_core ($prompt='Select File: ') {
 
 // Placeholder for preview of uploaded files
 function ecu_upload_form_preview ($display=true) {
-	echo "<p id='uploadedfile' " . ($display ? "" : "style='display:none'") 
+	echo "<p id='ecu_preview' " . ($display ? "" : "style='display:none'") 
 		. "></p>";
 }
 
@@ -58,8 +57,8 @@ function ecu_upload_form ($title, $msg, $prompt, $pre, $post, $check=true) {
 	$pre
 	
 	<div id='ecu_uploadform'>
-	<h3 name='title' style='clear : both'>$title</h3>
-	<div name='message'>$msg</div>
+	<h3 class='title'>$title</h3>
+	<div class='message'>$msg</div>
 	";
 
 	ecu_upload_form_core ($prompt);
@@ -202,6 +201,8 @@ function ecu_allow_upload () {
 
 // Set options to defaults, if not already set
 function ecu_initial_options () {
+	ecu_textdomain ();
+	wp_enqueue_style ('ecu', ecu_plugin_url () . 'style.css');
 	(get_option ('ecu_permission_required') === true) || add_option ('ecu_permission_required', 'none');
 	(get_option ('ecu_hide_comment_form') === true) || add_option ('ecu_hide_comment_form', 0);
 	(get_option ('ecu_images_only') === true) || add_option ('ecu_images_only', 0);
@@ -209,7 +210,7 @@ function ecu_initial_options () {
 }
 
 // Set textdomain for translations (i18n)
-function textdomain_easy_comment_uploads () {
+function ecu_textdomain () {
 	load_plugin_textdomain ('easy-comment-uploads'
 		,'wp-content/plugins/easy-comment-uploads/', 'easy-comment-uploads/');
 }
@@ -219,4 +220,5 @@ add_action ('admin_menu', 'ecu_options_menu');
 add_filter ('comment_text', 'ecu_insert_links');
 if (! get_option ('ecu_hide_comment_form'))
 	add_action('comment_form', 'ecu_upload_form_default');
-add_action('init', 'textdomain_easy_comment_uploads');
+// add_action('init', 'textdomain_easy_comment_uploads');
+add_action('init', 'ecu_initial_options');
