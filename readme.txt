@@ -14,9 +14,11 @@ If you like it please rate it, give feedback or you can donate.
 = Recent Changes =
 
 **0.53**
+
  * Remaining theme compatibility issues finally fixed.
 
 **0.52**
+
  * Allows only showing upload form on certain pages.
 
 **0.51**
