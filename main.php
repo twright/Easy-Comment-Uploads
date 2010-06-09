@@ -4,7 +4,7 @@ Plugin Name: Easy Comment Uploads
 Plugin URI: http://wordpress.org/extend/plugins/easy-comment-uploads/
 Description: Allow your users to easily upload images and files in their comments.
 Author: Tom Wright
-Version: 0.52
+Version: 0.53
 Author URI: http://twright.langtreeshout.org/
 */
 
@@ -48,27 +48,32 @@ function ecu_upload_form_preview ($display=true) {
 		. "></p>";
 }
 
+function ecu_upload_form_iframe () {
+	echo "<iframe style='width : 100%; height : 3.5em;"
+		. " border: 0px solid #ffffff;' src='"
+		. ecu_plugin_url () . "upload-form.php" 
+		. "' name='upload_form'></iframe>";
+}
+
 // Complete upload form
-function ecu_upload_form ($title, $msg, $prompt, $pre, $post, $check=true) {
+function ecu_upload_form ($title, $msg, $prompt, $check=true) {
 	if ( !ecu_allow_upload () && $check ) return;
 
 	echo "
 	<!-- Easy Comment Uploads for Wordpress by Tom Wright: http://wordpress.org/extend/plugins/easy-comment-uploads/ -->
-	$pre
 	
 	<div id='ecu_uploadform'>
 	<h3 class='title'>$title</h3>
 	<div class='message'>$msg</div>
 	";
-
-	ecu_upload_form_core ($prompt);
-
+	
+	ecu_upload_form_iframe ();
+		
 	ecu_upload_form_preview ();
 
 	echo "
 	</div>
 	
-	$post
 	<!-- End of Easy Comment Uploads -->
 	";
 }
@@ -79,9 +84,8 @@ function ecu_upload_form_default ($check=true) {
 		__('Upload Files', 'easy-comment-uploads'), // $title
 		'<p>' .  __('You can include images or files in your comment by selecting them below. Once you select a file, it will be uploaded and a link to it added to your comment. You can upload as many images or files as you like and they will all be added to your comment.', 'easy-comment-uploads') . '</p>', // $msg
 		__('Select File', 'easy-comment-uploads') . ': ', // $prompt
-		'</form>', // $pre -- work arround for nested forms
-		'<form>', // $post - more work arround
-		$check
+		$check,
+		true
 	);
 }
 

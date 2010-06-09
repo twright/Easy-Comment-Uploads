@@ -9,22 +9,22 @@
 
 		// Return true if there is any text in the comment field
 		function comment_length () {
-			if (parent.document.getElementById("comment"))
-				return parent.document.getElementById("comment").value.length;
-			else if (parent.document.getElementById("comment-p1"))
-				return parent.document.getElementById("comment-p1").value.length;
+			if (parent.parent.document.getElementById("comment"))
+				return parent.parent.document.getElementById("comment").value.length;
+			else if (parent.parent.document.getElementById("comment-p1"))
+				return parent.parent.document.getElementById("comment-p1").value.length;
 			else
-				return parent.document.forms["commentform"].comment.value.length;
+				return parent.parent.document.forms["commentform"].comment.value.length;
 		}
 
 		// Return true if comment ends in a new newline
 		function comment_ends_newline () {
-			if (parent.document.getElementById("comment"))
-				return (parent.document.getElementById("comment").value).endsWith("\n");
-			else if (parent.document.getElementById("comment-p1"))
-				return (parent.document.getElementById("comment-p1").value).endsWith("\n");
+			if (parent.parent.document.getElementById("comment"))
+				return (parent.parent.document.getElementById("comment").value).endsWith("\n");
+			else if (parent.parent.document.getElementById("comment-p1"))
+				return (parent.parent.document.getElementById("comment-p1").value).endsWith("\n");
 			else
-				return (parent.document.forms["commentform"].comment.value).endsWith("\n");
+				return (parent.parent.document.forms["commentform"].comment.value).endsWith("\n");
 		}
 
 		// Write txt to comment field
@@ -38,12 +38,12 @@
 				text = "\n" + text;
 
 			// Attempt to write text to comment field (wherever it may be)
-			if (parent.document.getElementById("comment"))
-				parent.document.getElementById("comment").value += text;
-			else if (parent.document.getElementById("comment-p1"))
-				parent.document.getElementById("comment-p1").value += text;
+			if (parent.parent.document.getElementById("comment"))
+				parent.parent.document.getElementById("comment").value += text;
+			else if (parent.parent.document.getElementById("comment-p1"))
+				parent.parent.document.getElementById("comment-p1").value += text;
 			else
-				parent.document.forms["commentform"].comment.value += text;
+				parent.parent.document.forms["commentform"].comment.value += text;
 		}
 		</script>
 	</head>
@@ -121,7 +121,7 @@
 		}
 		
 		function write_html_form ($html) {
-			write_js ("parent.document.getElementById('ecu_preview').innerHTML = \"$html\" + parent.document.getElementById('ecu_preview').innerHTML");
+			write_js ("parent.parent.document.getElementById('ecu_preview').innerHTML = \"$html\" + parent.parent.document.getElementById('ecu_preview').innerHTML");
 		}
 		
 		function find_unique_target ($prototype) {
