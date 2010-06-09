@@ -4,7 +4,7 @@ Plugin Name: Easy Comment Uploads
 Plugin URI: http://wordpress.org/extend/plugins/easy-comment-uploads/
 Description: Allow your users to easily upload images and files in their comments.
 Author: Tom Wright
-Version: 0.51
+Version: 0.52
 Author URI: http://twright.langtreeshout.org/
 */
 
@@ -74,15 +74,14 @@ function ecu_upload_form ($title, $msg, $prompt, $pre, $post, $check=true) {
 }
 
 // Default comment form
-function ecu_upload_form_default () {
-	if ( !ecu_allow_upload () ) return;
-
+function ecu_upload_form_default ($check=true) {
 	ecu_upload_form (
 		__('Upload Files', 'easy-comment-uploads'), // $title
 		'<p>' .  __('You can include images or files in your comment by selecting them below. Once you select a file, it will be uploaded and a link to it added to your comment. You can upload as many images or files as you like and they will all be added to your comment.', 'easy-comment-uploads') . '</p>', // $msg
 		__('Select File', 'easy-comment-uploads') . ': ', // $prompt
 		'</form>', // $pre -- work arround for nested forms
-		'<form>' // $post - more work arround
+		'<form>', // $post - more work arround
+		$check
 	);
 }
 
@@ -108,6 +107,9 @@ function ecu_options_page () {
 			&& preg_match ('/[0-9]+/', $_POST ['max_file_size'])
 			&& $_POST ['max_file_size'] >= 0)
 			update_option ('ecu_max_file_size', $_POST ['max_file_size']);
+		if (isset ($_POST ['enabled_pages'])
+			&& preg_match ('/^(all)|(([0-9]+ )*[0-9]+)$/', $_POST ['enabled_pages']))
+			update_option ('ecu_enabled_pages', $_POST ['enabled_pages']);
 
 		// Inform user
 		echo '<div id="message" class="updated fade"><p>' 
@@ -126,6 +128,7 @@ function ecu_options_page () {
 	foreach (array ('none', 'read', 'edit_posts', 'upload_files') as $elem)
 		$permission_required [] = ((get_option('ecu_permission_required') == $elem) ? 'checked' : '');
 	$max_file_size = get_option ('ecu_max_file_size');
+	$enabled_pages = get_option ('ecu_enabled_pages');
 
 	echo <<<END
 		<div class="wrap" style="max-width:950px !important;">
@@ -164,11 +167,15 @@ function ecu_options_page () {
 			</p>
 
 			<p>
-			<div>
 			Limit the size of uploaded files:
 			<input id="max_file_size" type="text" name="max_file_size" value="$max_file_size" />
 			<label for="max_file_size">(KiB, 0 = unlimited)</label></div>
-			</div>
+			</p>
+			
+			<p>
+			Only allow uploads on these pages:
+			<input id="enabled_pages" type="text" name="enabled_pages" value="$enabled_pages" />
+			<label for="enabled_pages">(<a href="http://www.techtrot.com/wordpress-page-id/">page_ids</a> seperated with spaces or 'all' to enable globally)</label>
 			</p>
 
 			<div class="submit"><input type="submit" name="Submit" value="Update options" /></div>
@@ -179,7 +186,7 @@ END;
 	 background-color : ghostwhite; border : 1px dashed gray;
 	 padding : 0 1em 0 1em'>
 	";
-	ecu_upload_form_default ();
+	ecu_upload_form_default (false);
 	echo "</div>";
 }
 
@@ -195,8 +202,14 @@ function ecu_upload_dir_url () {
 
 // Are uploads allowed?
 function ecu_allow_upload () {
-	return get_option ('ecu_permission_required') == 'none'
-	    || current_user_can (get_option ('ecu_permission_required'));
+	global $post;
+	$permission_required = get_option('ecu_permission_required');
+	$enabled_pages = get_option('ecu_enabled_pages');
+
+	return ($permission_required == 'none'
+	    || current_user_can ($permission_required))
+		&& (in_array ($post->ID, explode(' ', $enabled_pages))
+			|| $enabled_pages == "all");
 }
 
 // Set options to defaults, if not already set
@@ -207,6 +220,7 @@ function ecu_initial_options () {
 	(get_option ('ecu_hide_comment_form') === true) || add_option ('ecu_hide_comment_form', 0);
 	(get_option ('ecu_images_only') === true) || add_option ('ecu_images_only', 0);
 	(get_option ('ecu_max_file_size') === true) || add_option ('ecu_max_file_size', 0);
+	(get_option ('ecu_enabled_pages') === true) || add_option ('ecu_enabled_pages', 'all');
 }
 
 // Set textdomain for translations (i18n)
