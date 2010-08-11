@@ -2,8 +2,8 @@
 Contributors: Tom Wright
 Tags: comments, uploads, images, wpmu
 Requires at least: 2.6.0
-Tested up to: 2.9.2
-Stable tag: 0.54
+Tested up to: 3.0.1
+Stable tag: 0.55
 
 == Description ==
 
@@ -12,6 +12,10 @@ This plugin allow your visitors to attach images or other file to their comments
 If you like it please rate it, give feedback or you can donate.
 
 = Recent Changes =
+
+**0.55**
+
+ * Small compatibility imporvements.
 
 **0.54**
 
