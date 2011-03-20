@@ -127,15 +127,6 @@ Changes by Pascal de Vink ( www.finalist.com ):
  * Upload directories combined.
  * General code cleanup.
 
-= Coming soon =
-
- * Moving uploaded files to somewhere more sensible (e.g. uploads/comments on standard Wordpress and the blogs folder for Mu).
- * New translations including BR_pt, French and German.
- * Increased theme compatibility (testing needed).
- * More UI niceness :-) .
-
-*(hopefully I should get round to doing these quite soon, consider it as a rough roadmap to version 1.0)*
-
 For more updates about the plugin or to ask questions, follow me on Twitter: http://twitter.com/tomdwright
 
 == Installation ==
