@@ -1,17 +1,30 @@
 === Easy Comment Uploads ===
 Contributors: Tom Wright
 Tags: comments, uploads, images, wpmu
-Requires at least: 2.6.0
-Tested up to: 3.0.1
-Stable tag: 0.55
+Requires at least: 3.0.0
+Tested up to: 3.1.0
+Stable tag: 0.60
 
 == Description ==
 
-This plugin allow your visitors to attach images or other file to their comments as easily as possible. I designed it for http://langtreeshout.org . It also adds lightbox code for all inserted images. It has been tested for Wordpress and Wordpress Mu, if anything does not work please just email me at tom.tdw@gmail.com .
+This plugin allow your visitors to attach images or other file to their comments as easily as possible. I originally designed it for http://langtreeshout.org . It also adds lightbox code for all inserted images. It has been tested for Wordpress and Wordpress Mu; if anything does not work please just email me at tom.tdw@gmail.com .
 
 If you like it please rate it, give feedback or you can donate.
 
 = Recent Changes =
+
+**0.60**
+
+ * Bulgarian translation by SiteGround ( http://www.siteground.com/ ).
+ * French translation by M.HAROUY.
+ * Now only file names instead of full urls are shown by default.
+ * TinyMCEComments compatibility fixed.
+ * NicEdit compatibility fixed.
+ * Options reorganised and extended.
+ * Manually blacklist file extensions.
+ * Optionally allow only certain file extensions.
+ * Set limits for uploads per hour based on ip or user for each class of users.
+ * Various bug fixes.
 
 **0.55**
 
@@ -82,7 +95,7 @@ Changes by Pascal de Vink ( www.finalist.com ):
 
 **0.19**
 
- * pt_BR translation by Claudio Miranda ( http://www.claudius.com.br/ ). 
+ * pt_BR translation by Claudio Miranda ( http://www.claudius.com.br/ ).
 
 **0.18**
 
@@ -93,7 +106,7 @@ Changes by Pascal de Vink ( www.finalist.com ):
 **0.17**
 
  * Fixed problems with image width in some themes.
- * Changed naming of uploads to prevent conflicts. 
+ * Changed naming of uploads to prevent conflicts.
 
 **0.15**
 
@@ -113,7 +126,7 @@ Changes by Pascal de Vink ( www.finalist.com ):
  * Installation now much less hacky (if it did not work for you before it should now).
  * Upload directories combined.
  * General code cleanup.
- 
+
 = Coming soon =
 
  * Moving uploaded files to somewhere more sensible (e.g. uploads/comments on standard Wordpress and the blogs folder for Mu).
@@ -127,7 +140,7 @@ For more updates about the plugin or to ask questions, follow me on Twitter: htt
 
 == Installation ==
 
-Just add to /wp-content/plugins and activate or use the automatic plugin installer. If you want to use it in Wordpress Mu for all blogs just copy comment-uploads.php to /wp-content/mu-plugins and leave the rest in place or use the new activate site wide option for an much simpler installation. 
+Just add to /wp-content/plugins and activate or use the automatic plugin installer. If you want to use it in Wordpress Mu for all blogs just copy comment-uploads.php to /wp-content/mu-plugins and leave the rest in place or use the new activate site wide option for an much simpler installation.
 
 == Frequently Asked Questions ==
 
@@ -160,6 +173,10 @@ Currently the plugin blacklists unsafe filetypes and is bound by the global php 
 Since version 0.50, it includes new security features including checking the domain of the referrer and allowing you to set a filesize limit.
 
 As with all plugins, new versions include security fixes and resolve other bugs so I always recommend running the latest stable version.
+
+= How can I enable lightboxes =
+
+If you install the wordpress lightbox plugin (http://wordpress.org/extend/plugins/lightbox-2/) then all uploaded images may be displayed using lightbox support.
 
 = I have just thought of an amazing feature your plugin should have, what can I do? =
 
