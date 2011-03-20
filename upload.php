@@ -91,7 +91,7 @@
             if ($is_image)
                 write_html_form("<a href='$filelink' rel='lightbox[new]'><img class='ecu_preview_img' src='$filelink' /></a><br />");
 
-            user_record_upload_time();
+            ecu_user_record_upload_time();
         } else {
             $alert = "There was an error uploading the file, please try again!";
         }
