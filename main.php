@@ -4,7 +4,7 @@ Plugin Name: Easy Comment Uploads
 Plugin URI: http://wordpress.org/extend/plugins/easy-comment-uploads/
 Description: Allow your users to easily upload images and files in their comments.
 Author: Tom Wright
-Version: 0.60
+Version: 0.61
 Author URI: http://twright.langtreeshout.org/
 */
 
@@ -73,7 +73,7 @@ function ecu_user_uploads_in_last_hour() {
     $ip_upload_times = get_option('ecu_ip_upload_times');
     $times = (is_user_logged_in() ?
         get_user_meta(get_current_user_id(), 'ecu_upload_times', true)
-        : $ip_upload_times[user_ip_address()]);
+        : $ip_upload_times[ecu_user_ip_address()]);
     $i = 0;
     $now = time();
     foreach($times as $time)
