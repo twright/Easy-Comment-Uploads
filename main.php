@@ -8,16 +8,33 @@ Version: 0.61
 Author URI: http://twright.langtreeshout.org/
 */
 
-// Replaces [img] tags in comments with linked images (with lightbox support)
-// Accepts either [img]image.png[/img] or [img=image.png]
-// Also accepts [file] for other files
+// Replaces [tags] with correct html
+// Accepts either [img]image.png[/img] or [file]file.ext[/file] for other files
 // Thanks to Trevor Fitzgerald's plugin (http://www.trevorfitzgerald.com/) for
 // prompting the format used.
-function ecu_insert_links($s) {
-    $s = preg_replace('/\[img\](.*?)\[\/img\]/', '<a href="$1" rel="lightbox[comments]"> <img class="ecu_images" src="$1" /></a>', $s);
-    $s = preg_replace('/\[file\](.*?([^\/]*?))\[\/file\]/', '<a href="$1">'
-        . (get_option('ecu_show_full_file_path') ? '$1' : '$2') . '</a>', $s);
-    return $s;
+function ecu_insert_links($comment) {
+    // Extract contents of tags
+    preg_match_all('/\[(img|file)\]([^\]]*)\[\/\\1\]/i', $comment, $matches,
+        PREG_SET_ORDER);
+    foreach($matches as $match) {
+        // Validate tags contain links of the correct format
+        if (filter_var($match[2], FILTER_VALIDATE_URL)) {
+            // Insert correct code based on tag
+            if ($match[1] == 'img') {
+                $html = "<a href='$match[2]' rel='lightbox[comments]'>"
+                    . "<img class='ecu_images' src='$match[2]' /></a>";
+            } elseif ($match[1] == 'file') {
+                preg_match('/[^\/]*$/', $match[2], $filename);
+                $name = get_option('ecu_show_full_file_path') ? $match[2]
+                    : $filename[0];
+                $html = "<a href='$match[2]'>File: $name</a>";
+            }
+            
+            $comment = str_replace($match[0], $html, $comment);
+        }
+    }
+
+    return $comment;
 }
 
 // Retrieve either a user created file extension blacklist or a default list of
@@ -26,7 +43,7 @@ function ecu_insert_links($s) {
 function ecu_get_blacklist() {
     $default_blacklist = array('htm', 'html', 'shtml', 'mhtm', 'mhtml', 'js',
         'php', 'php3', 'php4', 'php5', 'php6',
-        'cgi', 'fcgi', 'pl', 'perl', 'asp', 'aspx',
+        'cgi', 'fcgi', 'pl', 'perl', 'p6', 'asp', 'aspx',
         'htaccess',
         'py', 'python', 'exe', 'bat',  'sh', 'run', 'bin', 'vb', 'vbe', 'vbs');
     return get_option('ecu_file_extension_blacklist', $default_blacklist);
@@ -44,7 +61,8 @@ function ecu_user_ip_address() {
 function ecu_user_record_upload_time() {
     $time = time();
     if (is_user_logged_in()) {
-        $times = get_user_meta(get_current_user_id(), 'ecu_upload_times', true);
+        $times = get_user_meta(get_current_user_id(), 'ecu_upload_times',
+            true);
         update_user_meta(get_current_user_id(), 'ecu_upload_times',
             ($times ? array_merge(array($time), $times) : array($time)));
     } else {
@@ -70,21 +88,22 @@ function ecu_user_uploads_per_hour() {
 
 // Calculate the number of times which occured during the last hour
 function ecu_user_uploads_in_last_hour() {
+    // Get times either for current user or ip as available
     $ip_upload_times = get_option('ecu_ip_upload_times');
-    $times = (is_user_logged_in() ?
-        get_user_meta(get_current_user_id(), 'ecu_upload_times', true)
+    $times = (is_user_logged_in()
+        ? get_user_meta(get_current_user_id(), 'ecu_upload_times', true)
         : $ip_upload_times[ecu_user_ip_address()]);
-    $i = 0;
+    $i = 0; // Counter for uploads
     $now = time();
     foreach($times as $time)
-        if ($now - $time <= 60*60)
-            $i++;
+        // If time passed less than or equal to 3600 s (1 hour), increment i
+        if ($now - $time <= 3600) $i++;
     return $i;
 }
 
 // Get url of plugin
 function ecu_plugin_url() {
-    return plugins_url ('easy-comment-uploads/');
+    return plugins_url('easy-comment-uploads/');
 }
 
 // Core upload form
@@ -101,7 +120,7 @@ function ecu_upload_form_core($prompt='Select File: ') {
             document.uploadform.file.value = \"\"' />
     </form>
 
-    <iframe name='hiddenframe' style='display : none'></iframe>
+    <iframe name='hiddenframe' style='display : none' frameborder='0'></iframe>
     ";
 }
 
@@ -143,14 +162,26 @@ function ecu_upload_form($title, $msg, $prompt, $check=true) {
 }
 
 // Default comment form
-function ecu_upload_form_default($check=true) {
+function ecu_upload_form_default($prompt=true) {
     ecu_upload_form (
         __('Upload Files', 'easy-comment-uploads'), // $title
-        '<p>' .  __('You can include images or files in your comment by selecting them below. Once you select a file, it will be uploaded and a link to it added to your comment. You can upload as many images or files as you like and they will all be added to your comment.', 'easy-comment-uploads') . '</p>', // $msg
+        '<p>' . ecu_message_text() . '</p>', // $msg
         __('Select File', 'easy-comment-uploads') . ': ', // $prompt
-        $check,
-        true
+        $check, // $prompt
+        true // $check
     );
+}
+
+// Get message text
+function ecu_message_text() {
+    if (get_option('ecu_message_text'))
+        return get_option('ecu_message_text');
+    else
+        return __('You can include images or files in your comment by'
+            . ' selecting them below. Once you select a file, it will be'
+            . ' uploaded and a link to it added to your comment. You can'
+            . ' upload as many images or files as you like and they will all'
+            . ' be added to your comment.', 'easy-comment-uploads');
 }
 
 // Add options menu item (restricted to level_10 users)
@@ -162,7 +193,6 @@ function ecu_options_menu() {
 
 // Provide an options page in wp-admin
 function ecu_options_page() {
-
     // Handle changed options
     if (isset($_POST['submitted'])) {
         check_admin_referer ('easy-comment-uploads');
@@ -208,7 +238,8 @@ function ecu_options_page() {
             && preg_match('/^(all)|(([0-9]+ )*[0-9]+)$/', $_POST['enabled_pages']))
             update_option('ecu_enabled_pages', $_POST['enabled_pages']);
         if (isset($_POST['file_extension_blacklist'])
-            && $_POST['file_extension_blacklist'] != implode(', ', ecu_get_blacklist())
+            && $_POST['file_extension_blacklist'] != implode(', ',
+                ecu_get_blacklist())
             && preg_match('/^[a-z0-9]+([, ][ ]*[a-z0-9]+)*$/i',
             $_POST['file_extension_blacklist']))
             if ($_POST['file_extension_blacklist'] == 'default')
@@ -224,6 +255,8 @@ function ecu_options_page() {
                 delete_option('ecu_file_extension_whitelist');
             else update_option('ecu_file_extension_whitelist',
                 preg_split("/[, ][ ]*/", $_POST['file_extension_whitelist']));
+        if (isset($_POST['upload_form_text']))
+            update_option('ecu_message_text', $_POST['upload_form_text']);
 
         // Inform user
         echo '<div id="message" class="updated fade"><p>'
@@ -239,7 +272,8 @@ function ecu_options_page() {
     $show_full_file_path = (get_option('ecu_show_full_file_path') ? 'checked' : '');
     $premission_required = array();
     foreach (array('none', 'read', 'edit_posts', 'upload_files') as $elem)
-        $permission_required[] = ((get_option('ecu_permission_required') == $elem) ? 'checked' : '');
+        $permission_required[] =
+            ((get_option('ecu_permission_required') == $elem) ? 'checked' : '');
     $max_file_size = get_option('ecu_max_file_size');
     $enabled_pages = get_option('ecu_enabled_pages');
     $file_extension_blacklist = ecu_get_blacklist() ?
@@ -248,6 +282,7 @@ function ecu_options_page() {
         = get_option('ecu_file_extension_whitelist') === false
         ? 'ignore' : implode(', ', get_option('ecu_file_extension_whitelist'));
     $uploads_per_hour = get_option('ecu_uploads_per_hour');
+    $upload_form_text = ecu_message_text();
 
     // Info for form
     $actionurl = $_SERVER['REQUEST_URI'];
@@ -302,7 +337,8 @@ function ecu_options_page() {
                 value="upload_files" $permission_required[3] />
             <label for="upload_rights_only">Require "Upload" rights to uploads files
                 (e.g. only admin, editors and authors).</label></li>
-
+                
+            <br />
 
             <li><table class="widefat">
                 <tr>
@@ -325,33 +361,61 @@ function ecu_options_page() {
                 </tr>
                 <tr>
                     <th>unregistered users</th>
-                    <td><input id="none_uploads_per_hour" type="text" name="none_uploads_per_hour" value="$uploads_per_hour[none]" /></td>
+                    <td><input id="none_uploads_per_hour" type="text"
+                    name="none_uploads_per_hour"
+                    value="$uploads_per_hour[none]" /></td>
                 </tr>
             </table></li>
             </ul>
 
             <h3>Upload Form</h3>
             <ul>
-            <li><input id="hide_comment_form" type="checkbox" name="hide_comment_form" $hide_comment_form />
-            <label for="hide_comment_form">Hide from comment forms</li>
+            <li>
+                <label for="upload_form_text">
+                    Text explaining use of the upload form (leave blank for
+                    default text):
+                </label>
+                <br />
+                <textarea id="upload_form_text" name="upload_form_text"
+                    style="width : 100%; height : 65pt"
+                    >$upload_form_text</textarea>
+            </li>
 
             <li>
-            Only allow uploads on these pages:
-            <input id="enabled_pages" type="text" name="enabled_pages" value="$enabled_pages" />
-            <br />
-            <label for="enabled_pages">(<a href="http://www.techtrot.com/wordpress-page-id/">page_ids</a> seperated with spaces or 'all' to enable globally)</label>
+                <input id="hide_comment_form" type="checkbox"
+                name="hide_comment_form" $hide_comment_form />
+                <label for="hide_comment_form">Hide from comment forms
+            </li>
+
+            <li>
+                Only allow uploads on these pages:
+                <input id="enabled_pages" type="text" name="enabled_pages"
+                value="$enabled_pages" />
+                <br />
+                <label for="enabled_pages">
+                (<a href="http://www.techtrot.com/wordpress-page-id/">page_ids</a>
+                seperated with spaces or 'all' to enable globally)
+                </label>
             </li>
             </ul>
 
             <h3>Comments</h3>
             <ul>
-            <li><input id="show_full_file_path" type="checkbox" name="show_full_file_path" $show_full_file_path />
-            <label for="show_full_file_path">Show full url in links to files</label></li>
+            <li>
+                <input id="show_full_file_path" type="checkbox"
+                name="show_full_file_path" $show_full_file_path />
+                <label for="show_full_file_path">
+                    Show full url in links to files
+                </label>
+            </li>
             </ul>
 
-            <p class="submit"><input type="submit" class="button-primary" name="Submit" value="Save Changes" /></p>
+            <p class="submit"><input type="submit" class="button-primary"
+            name="Submit" value="Save Changes" /></p>
         </form>
 END;
+
+    // Sample upload form
     echo "
     <div style='margin : auto auto auto 2em; width : 40em;
      background-color : ghostwhite; border : 1px dashed gray;
@@ -401,6 +465,8 @@ function ecu_initial_options() {
         update_option('ecu_enabled_pages', 'all');
     if (get_option('ecu_ip_upload_times') === false)
         update_option('ecu_ip_upload_times', array());
+    if (get_option('ecu_message_text') === false)
+        update_option('ecu_message_text', '');
     if (get_option('ecu_uploads_per_hour') === false)
         update_option('ecu_uploads_per_hour', array(
                 'upload_files' => -1,
@@ -412,8 +478,9 @@ function ecu_initial_options() {
 
 // Set textdomain for translations (i18n)
 function ecu_textdomain() {
-    load_plugin_textdomain ('easy-comment-uploads'
-        ,'wp-content/plugins/easy-comment-uploads/', 'easy-comment-uploads/i18n/');
+    load_plugin_textdomain ('easy-comment-uploads',
+        'wp-content/plugins/easy-comment-uploads/',
+        'easy-comment-uploads/i18n/');
 }
 
 // Register code with wordpress

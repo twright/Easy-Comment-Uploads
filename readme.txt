@@ -1,17 +1,27 @@
 === Easy Comment Uploads ===
 Contributors: Tom Wright
-Tags: comments, uploads, images, wpmu
+Donate link: http://goo.gl/WFJP6
+Tags: comments, uploads, images
 Requires at least: 3.0.0
-Tested up to: 3.1.0
+Tested up to: 3.2.0
 Stable tag: 0.61
 
 == Description ==
 
-This plugin allow your visitors to attach images or other file to their comments as easily as possible. I originally designed it for http://langtreeshout.org . It also adds lightbox code for all inserted images. It has been tested for Wordpress and Wordpress Mu; if anything does not work please just email me at tom.tdw@gmail.com .
+This plugin allow your visitors to attach images or other file to their comments as easily as possible. I originally designed it for http://langtreeshout.org. It also adds Lightbox code for all inserted images. It has been tested extensively with most recent versions of Wordpress; if anything does not work please just email me at tom.tdw@gmail.com.
 
-If you like it please rate it, give feedback or you can donate.
+If you like it please rate it, give feedback or you can support its further development by donating.
 
-= Recent Changes =
+== Changelog ==
+
+**0.70**
+
+ * Added more robust url verification
+ * Added better filtering of unwanted characters in filenames
+ * Dutch translation by Bard van de Laar (https://launchpad.net/~bartvdlaar)
+ * German translation by Hendrik Just (https://launchpad.net/~jh30just)
+ * Russian translation by Sergey Sedov (https://launchpad.net/~serg-sedov)
+ * Spanish translation by ana (https://launchpad.net/~anabelle)
 
 **0.61**
 
@@ -19,7 +29,7 @@ If you like it please rate it, give feedback or you can donate.
 
 **0.60**
 
- * Bulgarian translation by SiteGround ( http://www.siteground.com/ ).
+ * Bulgarian translation by SiteGround (http://www.siteground.com/).
  * French translation by M.HAROUY.
  * Now only file names instead of full urls are shown by default.
  * TinyMCEComments compatibility fixed.
@@ -48,7 +58,7 @@ If you like it please rate it, give feedback or you can donate.
 
 **0.51**
 
- * Slightly more failsafe plugin url function.
+ * Slightly more fail-safe plugin url function.
  * Separated CSS into separate file.
 
 **0.50**
@@ -77,29 +87,29 @@ If you like it please rate it, give feedback or you can donate.
  * Much nicer formatting for embedded images.
  * Pretty preview for uploaded images.
  * New, more "human friendly" naming scheme.
- * Images only option now transfered server side (so no spoofing).
- * Automated uninstall with cleanup (all file and comments will be saved).
+ * Images only option now transferred server side (so no spoofing).
+ * Automated uninstall with clean-up (all file and comments will be saved).
 
 **0.25**
 
-Changes by Pascal de Vink ( www.finalist.com ):
+Changes by Pascal de Vink (www.finalist.com):
 
  * Dutch translation.
  * Options page.
- * Filetype checking improvments.
+ * File-type checking improvements.
 
 **0.21**
 
- * be_BY translation thanks to ilyuha ( http://antsar.info/ ).
- * Filetype blacklist security fix.
+ * be_BY translation thanks to ilyuha (http://antsar.info/).
+ * File-type blacklist security fix.
 
 **0.20**
 
- * ru_RU translation thanks to Fat Cow ( http://www.fatcow.com/ ).
+ * ru_RU translation thanks to Fat Cow (http://www.fatcow.com/).
 
 **0.19**
 
- * pt_BR translation by Claudio Miranda ( http://www.claudius.com.br/ ).
+ * pt_BR translation by Claudio Miranda (http://www.claudius.com.br/).
 
 **0.18**
 
@@ -121,7 +131,7 @@ Changes by Pascal de Vink ( www.finalist.com ):
 
  * Auto-adding the file links to comment (i.e. no copy and paste).
  * Much nice user experience.
- * More code cleanup.
+ * More code clean-up.
  * Blacklist of dangerous file types (this was a serious security problem in old version, please upgrade ASAP).
 
 **0.10**
@@ -129,7 +139,7 @@ Changes by Pascal de Vink ( www.finalist.com ):
  * Better support for non-image uploads.
  * Installation now much less hacky (if it did not work for you before it should now).
  * Upload directories combined.
- * General code cleanup.
+ * General code clean-up.
 
 For more updates about the plugin or to ask questions, follow me on Twitter: http://twitter.com/tomdwright
 
@@ -151,28 +161,28 @@ If you need help with the plugin then email me at tom.tdw@gmail.com and I will b
 
 I develop the plugin in my free time whilst providing free support for it so if you enjoy using it and would like to support it then any donations would be gratefully received.
 
-If you want to donate then you can do so securely using paypal:
-(paypal link coming soon)
+If you want to donate then you can do so securely using Paypal:
+http://goo.gl/WFJP6
 
 = Is it available in my language? =
 
-Currently the plugin is only available in English and a few other languages but anyone can translate it using Wordpress's standard tools: http://codex.wordpress.org/Translating_WordPress . If you translate the plugin then please email me the PO files so that other users can benefit from them as well.
+Currently the plugin is available in English and 9 other languages but anyone can translate it using Wordpress's standard tools (see http://codex.wordpress.org/Translating_WordPress for more information). If you translate the plugin then please email me the PO files so that other users can benefit from them as well.
 
 Alternatively you can translate the plugin online using an easy web interface on launchpad:
 https://translations.edge.launchpad.net/easy-comment-uploads/trunk
 
 = Is it secure? =
 
-Currently the plugin blacklists unsafe filetypes and is bound by the global php security settings so it should be fairly safe to use. However as with any plugin there is a risk and if the security measures taken by your site are not adequate, then this risk is greatly increased. As always I recommend you keep backups and if you do discover security issues with the plugin please let me know so I can resolve them as soon as possible.
+Currently the plugin blacklists unsafe file-types and is bound by the global PHP security settings so it should be fairly safe to use. However as with any plugin there is a risk and if the security measures taken by your site are not adequate, then this risk is greatly increased. As always I recommend you keep backups and if you do discover security issues with the plugin please let me know so I can resolve them as soon as possible.
 
-Since version 0.50, it includes new security features including checking the domain of the referrer and allowing you to set a filesize limit.
+In recent versions, many new security features have been added including NONCE checks, and configurable options to restrict file-types, file-sizes and the allowed frequency of uploads for each type of user.
 
 As with all plugins, new versions include security fixes and resolve other bugs so I always recommend running the latest stable version.
 
-= How can I enable lightboxes =
+= How can I enable Lightboxes =
 
-If you install the wordpress lightbox plugin (http://wordpress.org/extend/plugins/lightbox-2/) then all uploaded images may be displayed using lightbox support.
+If you install the Wordpress Lightbox plugin (http://wordpress.org/extend/plugins/lightbox-2/) then all uploaded images may be displayed using Lightbox support.
 
 = I have just thought of an amazing feature your plugin should have, what can I do? =
 
-Good for you - send me and email or comment and if I like the idea, I will see whether my coding skills will stretch to making it. If you have a patch or want to contribute then even better - just contact me with a brief introduction and I will add you as a contributor to the plugin.
+Good for you - send me and email or comment and if I like the idea, I will see whether I have time to implement it. If you have a patch or want to contribute then even better - just contact me with a brief introduction and I will add you as a contributor to the plugin.
