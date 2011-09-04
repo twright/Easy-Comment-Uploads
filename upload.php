@@ -1,4 +1,4 @@
-<?php require('../../../wp-blog-header.php'); ?>
+<?php require('../../../wp-load.php'); ?>
 <!doctype html5>
 <html>
     <head>

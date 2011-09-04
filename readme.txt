@@ -18,6 +18,7 @@ If you like it please rate it, give feedback or you can support its further deve
 
  * Added more robust url verification
  * Added better filtering of unwanted characters in filenames
+ * Danish translation by Brian Brandt (http://wpdk.dk)
  * Dutch translation by Bard van de Laar (https://launchpad.net/~bartvdlaar)
  * German translation by Hendrik Just (https://launchpad.net/~jh30just)
  * Russian translation by Sergey Sedov (https://launchpad.net/~serg-sedov)

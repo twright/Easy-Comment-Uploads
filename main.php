@@ -42,7 +42,7 @@ function ecu_insert_links($comment) {
 // the plugin if it has not been edited by the user.
 function ecu_get_blacklist() {
     $default_blacklist = array('htm', 'html', 'shtml', 'mhtm', 'mhtml', 'js',
-        'php', 'php3', 'php4', 'php5', 'php6',
+        'php', 'php3', 'php4', 'php5', 'php6', 'phtml',
         'cgi', 'fcgi', 'pl', 'perl', 'p6', 'asp', 'aspx',
         'htaccess',
         'py', 'python', 'exe', 'bat',  'sh', 'run', 'bin', 'vb', 'vbe', 'vbs');
@@ -260,7 +260,7 @@ function ecu_options_page() {
 
         // Inform user
         echo '<div id="message" class="updated fade"><p>'
-            . __('Easy Comment Uploads options saved.')
+            . 'Easy Comment Uploads options saved.'
             . '</p></div>';
     }
 
@@ -478,9 +478,8 @@ function ecu_initial_options() {
 
 // Set textdomain for translations (i18n)
 function ecu_textdomain() {
-    load_plugin_textdomain ('easy-comment-uploads',
-        'wp-content/plugins/easy-comment-uploads/',
-        'easy-comment-uploads/i18n/');
+    load_plugin_textdomain('easy-comment-uploads', false,
+        basename(dirname(__FILE__)) . '/languages');
 }
 
 // Register code with wordpress
