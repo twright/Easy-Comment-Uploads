@@ -57,9 +57,10 @@
         $target_name = basename($target_path);
 
         // Debugging message example
-        /* write_js("alert ('$_FILES['file']['error']')");
-        $error = (int) $_FILES['file']['error'];
-        write_js("alert ('$error')"); */
+        /* write_js("alert ('$_FILES['file']['error']')"); */
+        //$error = (int) $_FILES['file']['error'];
+        //write_js("alert ('$error')");
+        //js_alert($target_dir);
 
         // Default values
         $filecode = "";
@@ -69,12 +70,14 @@
         $is_image = preg_match ('/(jpeg|png|gif)/i', $_FILES['file']['type']);
         $type = ($is_image) ? "img" : "file";
 
-        if (!$is_image && $images_only) {
+        if (!is_writable($target_dir)) {
+            $alert = "Files can not be written to $target_dir. Please make sure that the permissions are set correctly (mode 666)."; 
+        } else if (!$is_image && $images_only) {
             $alert = "Sorry, you can only upload images.";
         } else if (filetype_blacklisted() && !filetype_whitelisted()) {
             $alert = "You are attempting to upload a file with a"
                 . "disallowed/unsafe filetype!";
-        } else if (!(filetype_whitelisted() && ecu_get_whitelist())) {
+        } else if (!filetype_whitelisted() && ecu_get_whitelist()) {
             $alert = 'You may only upload files with the following extensions: '
                 . implode(', ', ecu_get_whitelist());
         } else if ($max_file_size != 0
@@ -118,7 +121,7 @@
 
             ecu_user_record_upload_time();
         } else {
-            $alert = 'There was an error uploading the file,'
+            $alert = 'There was an error uploading the file, '
                 . 'please try again!';
         }
         
@@ -132,7 +135,7 @@
         function filetype_blacklisted() {
             $blacklist = ecu_get_blacklist();
             return preg_match('/\\.((' . implode('|', $blacklist)
-                . ')|~)(\\.|$)/i', $_FILES['file']['name']);
+                . ')|~)([^a-z0-9]|$)/i', $_FILES['file']['name']);
         }
 
         // Check upload against whitelist and return true if it matches

@@ -16,6 +16,8 @@ If you like it please rate it, give feedback or you can support its further deve
 
 **0.70**
 
+ * Option added to change upload directory.
+ * Fixed some bugs in blacklist checking.
  * Enable the plugin for specific categories only.
  * Only allow whitelisted filetypes by default for much improved security.
  * Much more informative error messages.
