@@ -56,11 +56,10 @@
             . basename($_FILES['file']['name']));
         $target_name = basename($target_path);
 
-        // Debugging message example
-        /* write_js("alert ('$_FILES['file']['error']')"); */
-        //$error = (int) $_FILES['file']['error'];
-        //write_js("alert ('$error')");
-        //js_alert($target_dir);
+        /* Debugging info */
+        // $error = (int) $_FILES['file']['error'];
+        // write_js("alert('$error')");
+        // sleep(2);
 
         // Default values
         $filecode = "";
@@ -168,7 +167,7 @@
             $prototype_parts = pathinfo ($prototype);
             $ext = $prototype_parts['extension'];
             $dir = $prototype_parts['dirname'];
-            $name = sanitize_file_name($prototype_parts['filename']);
+            $name = sanitize_file_name(filter_var($prototype_parts['filename'], FILTER_SANITIZE_URL));
             $dot = $ext == '' ? '' : '.';
             if (!file_exists("$dir/$name.$ext")) {
                 return "$dir/$name$dot$ext";

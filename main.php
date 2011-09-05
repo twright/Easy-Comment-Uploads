@@ -9,6 +9,12 @@ Author URI: http://gplus.to/twright/
 License: GPLv3
 */
 
+// Take a image url and return a url to a thumbnail for height $h, width $w
+// and using zoom/crop mode $zc
+function ecu_thumbnail($url, $h='null', $w='null', $zc=3) {
+    return ecu_plugin_url() . "timthumb.php?src=$url&zc=$zc&h=$h&w=$w";
+}
+
 // Replaces [tags] with correct html
 // Accepts either [img]image.png[/img] or [file]file.ext[/file] for other files
 // Thanks to Trevor Fitzgerald's plugin (http://www.trevorfitzgerald.com/) for
@@ -25,15 +31,18 @@ function ecu_insert_links($comment) {
             $name = get_option('ecu_show_full_file_path') ? $match[2]
                 : $filename[0];
             if ($match[1] == 'img') {
+                $thumbnail = ecu_thumbnail($match[2], 600);
                 $html = "<a href='$match[2]' rel='lightbox[comments]'>"
                     . (get_option('ecu_display_images_as_links') ? "Image: $name"
-                    : "<img class='ecu_images' src='$match[2]' />")
+                    : "<img class='ecu_images' src='$thumbnail' />")
                     . '</a>';
             } elseif ($match[1] == 'file') {
                 $html = "<a href='$match[2]'>File: $name</a>";
             }
             
             $comment = str_replace($match[0], $html, $comment);
+        } else {
+            echo $match[2];
         }
     }
 
@@ -136,9 +145,8 @@ function ecu_upload_form_preview($display=true) {
 
 // An iframe containing the upload form
 function ecu_upload_form_iframe() {
-    echo "<iframe style='width : 100%; height : 60px;"
-        . " border: 0px solid #ffffff;' src='"
-        . ecu_plugin_url () . "upload-form.php"
+    echo "<iframe class='ecu_upload_frame 'scrolling='no' frameborder='0'"
+        . " src='" . ecu_plugin_url () . "upload-form.php"
         . "' name='upload_form'></iframe>";
 }
 
@@ -304,15 +312,16 @@ function ecu_options_page() {
         <div class="wrap" style="max-width:950px !important;">
         <h2>Easy Comment Uploads</h2>
         
-        <p id='ecu_donate'>
-            This plugin was developed in my spare time, in the hope that others
-            would find it useful. If you want to support its future
+        <a href='http://goo.gl/WFJP6' target='_blank' style='text-decoration: none'>
+        <p id='ecu_donate' style='background-color: #757575; padding: 0.5em; color: white; font-weight: bold; text-align: center; font-size: 11pt; border-radius: 10px'>
+            If you find this plugin useful and want to support its future
             development, please consider donating.
-            <a href='http://goo.gl/WFJP6' target='_blank'>
-                <input type="submit" class="button-primary"
+            
+                <input type="submit" class="button-primary" style='margin-left: 1em'
                 name="donate" value="Donate" />
-            </a>
+            
         </p>
+        </a>
 
         <form name="ecuform" action="$action_url" method="post">
             <input type="hidden" name="submitted" value="1" />

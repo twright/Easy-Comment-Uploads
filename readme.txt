@@ -1,5 +1,5 @@
 === Easy Comment Uploads ===
-Contributors: Tom Wright
+Contributors: tomdwright
 Donate link: http://goo.gl/WFJP6
 Tags: comments, uploads, images
 Requires at least: 3.0.0
@@ -12,10 +12,17 @@ This plugin allow your visitors to attach images or other file to their comments
 
 If you like it please rate it, give feedback or you can support its further development by donating.
 
+== Upgrade Notice ==
+
+= 0.70 =
+ This version contains many important security improvements. You should upgrade as soon as possible to make sure your site is secure.
+
 == Changelog ==
 
 **0.70**
 
+ * Improved styling of upload form.
+ * Thumbnails of images are now generated to increase speed and reduce bandwith usage.
  * Option added to change upload directory.
  * Fixed some bugs in blacklist checking.
  * Enable the plugin for specific categories only.
@@ -180,7 +187,7 @@ https://translations.edge.launchpad.net/easy-comment-uploads/trunk
 
 = Is it secure? =
 
-Currently the plugin blacklists unsafe file-types and is bound by the global PHP security settings so it should be fairly safe to use. However as with any plugin there is a risk and if the security measures taken by your site are not adequate, then this risk is greatly increased. As always I recommend you keep backups and if you do discover security issues with the plugin please let me know so I can resolve them as soon as possible.
+The plugin will by default only allow certain types of files which are know to be safe to be uploaded, which should prevent the majority of upload related attacks and has been extensively tested to make sure it as safe as possible. However, as with any plugin, I cannot guarantee that vulnerabilities will not emerge in the future. 
 
 In recent versions, many new security features have been added including NONCE checks, and configurable options to restrict file-types, file-sizes and the allowed frequency of uploads for each type of user.
 

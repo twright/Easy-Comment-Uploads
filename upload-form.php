@@ -1,12 +1,13 @@
 <?php require ('../../../wp-load.php'); ?>
 <!doctype html>
 <head>
+    <link rel='stylesheet' href='<?php echo get_stylesheet_uri() ?>' />
+
     <style>
         body {
-            background : transparent;
-            /* font-family : 'Lucida Grande', Verdana, Arial, sans-serif; */
-            /* font-size : 10pt */
-            text-align: center;
+            background : transparent !important;
+            text-align: center !important;
+            margin: 0 !important;
         }
     </style>
     
@@ -16,7 +17,7 @@
         }
     </script>
 </head>
-<body> 
+<body>
     <form target='hiddenframe' enctype='multipart/form-data'
     action='<?php echo ecu_plugin_url() . 'upload.php' ?>'
     method='POST' name='uploadform' id='uploadform'>
