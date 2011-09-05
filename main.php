@@ -52,6 +52,15 @@ function ecu_get_blacklist() {
     return get_option('ecu_file_extension_blacklist', $default_blacklist);
 }
 
+// A list of file extensions which should not be harmful
+function ecu_get_whitelist() {
+    $default_whitelist = array('odt', 'ods', 'odp', 'doc', 'docx', 'xls',
+        'xlsx', 'ppt', 'pptx', 'pdf', 'bmp', 'gif', 'jpg', 'jpeg', 'webp',
+        'png', 'mp3', 'ogg', 'wav', 'webm', 'avi', 'mkv', 'mov', 'mp4',
+        'txt', 'psd', 'xcf');
+    return get_option('ecu_file_extension_whitelist', $default_whitelist);
+}
+
 // Get user ip address
 function ecu_user_ip_address() {
     if ($_SERVER['HTTP_X_FORWARD_FOR'])
@@ -222,6 +231,9 @@ function ecu_options_page() {
         if (isset($_POST['enabled_pages'])
             && preg_match('/^(all)|(([0-9]+ )*[0-9]+)$/', $_POST['enabled_pages']))
             update_option('ecu_enabled_pages', $_POST['enabled_pages']);
+        if (isset($_POST['enabled_pages'])
+            && preg_match('/^([1-9][0-9]*)?$/', $_POST['enabled_category']))
+            update_option('ecu_enabled_category', $_POST['enabled_category']);
         if (isset($_POST['file_extension_blacklist'])
             && $_POST['file_extension_blacklist'] != implode(', ',
                 ecu_get_blacklist())
@@ -262,6 +274,7 @@ function ecu_options_page() {
             ((get_option('ecu_permission_required') == $elem) ? 'checked' : '');
     $max_file_size = get_option('ecu_max_file_size');
     $enabled_pages = get_option('ecu_enabled_pages');
+    $enabled_category = get_option('ecu_enabled_category');
     $file_extension_blacklist = ecu_get_blacklist() ?
         implode(', ', ecu_get_blacklist()) : 'none';
     $file_extension_whitelist
@@ -372,7 +385,17 @@ function ecu_options_page() {
                 name="hide_comment_form" $hide_comment_form />
                 <label for="hide_comment_form">Hide from comment forms
             </li>
-
+            
+            <li>
+                Only allow uploads in this category:
+                <input id="enabled_category" type="text"
+                name="enabled_category" value="$enabled_category" />
+                <br />
+                <label for="enabled_category">
+                (<a href= "http://www.wprecipes.com/how-to-find-wordpress-category-id">category id</a> or leave blank to enable globally)
+                </label>
+            </li>
+            
             <li>
                 Only allow uploads on these pages:
                 <input id="enabled_pages" type="text" name="enabled_pages"
@@ -394,6 +417,7 @@ function ecu_options_page() {
                     Show full url in links to files
                 </label>
             </li>
+            
             <li>
                 <input id="display_images_as_links" type="checkbox"
                 name="display_images_as_links" $display_images_as_links />
@@ -433,11 +457,16 @@ function ecu_allow_upload() {
     global $post;
     $permission_required = get_option('ecu_permission_required');
     $enabled_pages = get_option('ecu_enabled_pages');
+    $enabled_category = get_option('ecu_enabled_category');
+    $categories = array_map(function($cat){ return $cat->cat_ID; },
+        get_the_category());
 
     return ($permission_required == 'none'
         || current_user_can($permission_required))
-        && (in_array ($post->ID, explode(' ', $enabled_pages))
-            || $enabled_pages == "all");
+        && (in_array($post->ID, explode(' ', $enabled_pages))
+            || $enabled_pages == 'all')
+        && (in_array($enabled_category, $categories)
+            || $enabled_category == '');
 }
 
 // Set options to defaults, if not already set
@@ -458,6 +487,8 @@ function ecu_initial_options() {
         update_option('ecu_max_file_size', 0);
     if (get_option('ecu_enabled_pages') === false)
         update_option('ecu_enabled_pages', 'all');
+    if (get_option('ecu_enabled_category') === false)
+        update_option('ecu_enabled_category', '');
     if (get_option('ecu_ip_upload_times') === false)
         update_option('ecu_ip_upload_times', array());
     if (get_option('ecu_message_text') === false)

@@ -16,13 +16,15 @@ If you like it please rate it, give feedback or you can support its further deve
 
 **0.70**
 
- * 
+ * Enable the plugin for specific categories only.
+ * Only allow whitelisted filetypes by default for much improved security.
+ * Much more informative error messages.
  * Loading image added.
  * Added more robust url verification.
  * Added better filtering of unwanted characters in filenames.
  * Danish translation by Brian Brandt (http://wpdk.dk).
  * Dutch translation by Bard van de Laar (https://launchpad.net/~bartvdlaar).
- * German translation by Hendrik Just (https://launchpad.net/~jh30just).
+ * German translations by Hendrik Just (https://launchpad.net/~jh30just) and Roland Heide for Design Contest (http://www.designcontest.com/).
  * Russian translation by Sergey Sedov (https://launchpad.net/~serg-sedov).
  * Spanish translation by ana (https://launchpad.net/~anabelle).
 

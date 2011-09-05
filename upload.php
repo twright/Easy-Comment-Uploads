@@ -68,18 +68,15 @@
         // Detect whether the uploaded file is an image
         $is_image = preg_match ('/(jpeg|png|gif)/i', $_FILES['file']['type']);
         $type = ($is_image) ? "img" : "file";
-        
-        sleep(5);
 
         if (!$is_image && $images_only) {
             $alert = "Sorry, you can only upload images.";
         } else if (filetype_blacklisted() && !filetype_whitelisted()) {
             $alert = "You are attempting to upload a file with a"
                 . "disallowed/unsafe filetype!";
-        } else if (!(filetype_whitelisted()
-            || get_option('ecu_file_extension_whitelist') === false)) {
+        } else if (!(filetype_whitelisted() && ecu_get_whitelist())) {
             $alert = 'You may only upload files with the following extensions: '
-                . implode(', ', get_option('ecu_file_extension_whitelist'));
+                . implode(', ', ecu_get_whitelist());
         } else if ($max_file_size != 0
             && $_FILES['file']['size']/1024 > $max_file_size) {
             $alert = "The file you've uploaded is too large ("
@@ -140,9 +137,7 @@
 
         // Check upload against whitelist and return true if it matches
         function filetype_whitelisted() {
-            if (get_option('ecu_file_extension_whitelist') === false)
-                return false;
-            $whitelist = get_option('ecu_file_extension_whitelist');
+            $whitelist = ecu_get_whitelist();
             return preg_match('/^[^\\.]+\\.(' . implode('|', $whitelist)
                 . ')$/i', $_FILES['file']['name']);
         }
