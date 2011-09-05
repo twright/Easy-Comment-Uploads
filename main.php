@@ -4,8 +4,9 @@ Plugin Name: Easy Comment Uploads
 Plugin URI: http://wordpress.org/extend/plugins/easy-comment-uploads/
 Description: Allow your users to easily upload images and files in their comments.
 Author: Tom Wright
-Version: 0.61
-Author URI: http://twright.langtreeshout.org/
+Version: 0.70
+Author URI: http://gplus.to/twright/
+License: GPLv3
 */
 
 // Replaces [tags] with correct html
@@ -20,13 +21,15 @@ function ecu_insert_links($comment) {
         // Validate tags contain links of the correct format
         if (filter_var($match[2], FILTER_VALIDATE_URL)) {
             // Insert correct code based on tag
+            preg_match('/[^\/]*$/', $match[2], $filename);
+            $name = get_option('ecu_show_full_file_path') ? $match[2]
+                : $filename[0];
             if ($match[1] == 'img') {
                 $html = "<a href='$match[2]' rel='lightbox[comments]'>"
-                    . "<img class='ecu_images' src='$match[2]' /></a>";
+                    . (get_option('ecu_display_images_as_links') ? "Image: $name"
+                    : "<img class='ecu_images' src='$match[2]' />")
+                    . '</a>';
             } elseif ($match[1] == 'file') {
-                preg_match('/[^\/]*$/', $match[2], $filename);
-                $name = get_option('ecu_show_full_file_path') ? $match[2]
-                    : $filename[0];
                 $html = "<a href='$match[2]'>File: $name</a>";
             }
             
@@ -106,24 +109,6 @@ function ecu_plugin_url() {
     return plugins_url('easy-comment-uploads/');
 }
 
-// Core upload form
-function ecu_upload_form_core($prompt='Select File: ') {
-    echo "
-    <form target='hiddenframe' enctype='multipart/form-data'
-    action='" . ecu_plugin_url() . 'upload.php'
-    .  "' method='POST' name='uploadform'
-    id='uploadform' style='text-align : center'>
-        " . wp_nonce_field('ecu_upload_form') . "
-        <label for='file' name='prompt'>$prompt</label>
-        <input type='file' name='file' id='file'
-            onchange='document.uploadform.submit ();
-            document.uploadform.file.value = \"\"' />
-    </form>
-
-    <iframe name='hiddenframe' style='display : none' frameborder='0'></iframe>
-    ";
-}
-
 // Placeholder for preview of uploaded files
 function ecu_upload_form_preview($display=true) {
     echo "<p id='ecu_preview' " . ($display ? "" : "style='display:none'")
@@ -139,7 +124,7 @@ function ecu_upload_form_iframe() {
 }
 
 // Complete upload form
-function ecu_upload_form($title, $msg, $prompt, $check=true) {
+function ecu_upload_form($title, $msg, $check=true) {
     if ( !ecu_allow_upload() && $check ) return;
 
     echo "
@@ -162,13 +147,11 @@ function ecu_upload_form($title, $msg, $prompt, $check=true) {
 }
 
 // Default comment form
-function ecu_upload_form_default($prompt=true) {
+function ecu_upload_form_default($check=true) {
     ecu_upload_form (
         __('Upload Files', 'easy-comment-uploads'), // $title
         '<p>' . ecu_message_text() . '</p>', // $msg
-        __('Select File', 'easy-comment-uploads') . ': ', // $prompt
-        $check, // $prompt
-        true // $check
+        $check // $check
     );
 }
 
@@ -187,15 +170,15 @@ function ecu_message_text() {
 // Add options menu item (restricted to level_10 users)
 function ecu_options_menu() {
     if (current_user_can("level_10"))
-        add_options_page('Easy Comment Uploads options',
+        add_plugins_page('Easy Comment Uploads options',
             'Easy Comment Uploads', 8, __FILE__, 'ecu_options_page');
 }
-
+ 
 // Provide an options page in wp-admin
 function ecu_options_page() {
     // Handle changed options
     if (isset($_POST['submitted'])) {
-        check_admin_referer ('easy-comment-uploads');
+        check_admin_referer('easy-comment-uploads');
 
         // Update options
         update_option ('ecu_images_only', $_POST['images_only'] != null);
@@ -206,6 +189,8 @@ function ecu_options_page() {
             (int) ($_POST['hide_comment_form'] != null));
         update_option ('ecu_show_full_file_path',
             (int) ($_POST['show_full_file_path'] != null));
+        update_option ('ecu_display_images_as_links',
+            (int) ($_POST['display_images_as_links'] != null));
         if (isset($_POST['max_file_size'])
             && preg_match ('/[0-9]+/', $_POST['max_file_size'])
             && $_POST['max_file_size'] >= 0)
@@ -270,6 +255,7 @@ function ecu_options_page() {
     $images_only = (get_option('ecu_images_only')) ? 'checked' : '';
     $hide_comment_form = (get_option('ecu_hide_comment_form') ? 'checked' : '');
     $show_full_file_path = (get_option('ecu_show_full_file_path') ? 'checked' : '');
+    $display_images_as_links = (get_option('ecu_display_images_as_links') ? 'checked' : '');
     $premission_required = array();
     foreach (array('none', 'read', 'edit_posts', 'upload_files') as $elem)
         $permission_required[] =
@@ -408,6 +394,13 @@ function ecu_options_page() {
                     Show full url in links to files
                 </label>
             </li>
+            <li>
+                <input id="display_images_as_links" type="checkbox"
+                name="display_images_as_links" $display_images_as_links />
+                <label for="display_images_as_links">
+                    Replace images with links
+                </label>
+            </li>
             </ul>
 
             <p class="submit"><input type="submit" class="button-primary"
@@ -419,7 +412,7 @@ END;
     echo "
     <div style='margin : auto auto auto 2em; width : 40em;
      background-color : ghostwhite; border : 1px dashed gray;
-     padding : 0 1em 0 1em'>
+     padding : 0 1em 0em 1em'>
     ";
     ecu_upload_form_default(false);
     echo "</div>";
@@ -455,6 +448,8 @@ function ecu_initial_options() {
         update_option('ecu_permission_required', 'none');
     if (get_option('ecu_show_full_file_path') === false)
         update_option('ecu_show_full_file_path', 0);
+    if (get_option('ecu_display_images_as_links') === false)
+        update_option('ecu_display_images_as_links', 0);
     if (get_option('ecu_hide_comment_form') === false)
         update_option('ecu_hide_comment_form', 0);
     if (get_option('ecu_images_only') === false)

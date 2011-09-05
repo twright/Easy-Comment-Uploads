@@ -31,6 +31,11 @@
             comment.value = comment.value.replace(/[\n]+$/, '')
                 + (comment.value.length > 0 ? '\n' : '') + text + '\n';
         }
+        
+        function upload_end() {
+            parent.document.getElementById('uploadform').style.display = 'block';
+            parent.document.getElementById('loading').style.display = 'none';
+        }
         </script>
     </head>
 
@@ -63,6 +68,8 @@
         // Detect whether the uploaded file is an image
         $is_image = preg_match ('/(jpeg|png|gif)/i', $_FILES['file']['type']);
         $type = ($is_image) ? "img" : "file";
+        
+        sleep(5);
 
         if (!$is_image && $images_only) {
             $alert = "Sorry, you can only upload images.";
@@ -104,8 +111,8 @@
             write_js("write_comment('$filecode');");
 
             // Post info below upload form
-            write_html_form("<div class='ecu_preview_file'>
-                <a href='$filelink'>$target_name</a><br />$filecode</div>");
+            write_html_form("<div class='ecu_preview_file'>"
+                . "<a href='$filelink'>$target_name</a><br />$filecode</div>");
 
             if ($is_image)
                 write_html_form("<a href='$filelink' rel='lightbox[new]'>"
@@ -117,6 +124,8 @@
             $alert = 'There was an error uploading the file,'
                 . 'please try again!';
         }
+        
+        write_js('upload_end()');
 
         // Alert the user of any errors
         if (isset($alert))

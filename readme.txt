@@ -3,7 +3,7 @@ Contributors: Tom Wright
 Donate link: http://goo.gl/WFJP6
 Tags: comments, uploads, images
 Requires at least: 3.0.0
-Tested up to: 3.2.0
+Tested up to: 3.2.1
 Stable tag: 0.61
 
 == Description ==
@@ -16,13 +16,15 @@ If you like it please rate it, give feedback or you can support its further deve
 
 **0.70**
 
- * Added more robust url verification
- * Added better filtering of unwanted characters in filenames
- * Danish translation by Brian Brandt (http://wpdk.dk)
- * Dutch translation by Bard van de Laar (https://launchpad.net/~bartvdlaar)
- * German translation by Hendrik Just (https://launchpad.net/~jh30just)
- * Russian translation by Sergey Sedov (https://launchpad.net/~serg-sedov)
- * Spanish translation by ana (https://launchpad.net/~anabelle)
+ * 
+ * Loading image added.
+ * Added more robust url verification.
+ * Added better filtering of unwanted characters in filenames.
+ * Danish translation by Brian Brandt (http://wpdk.dk).
+ * Dutch translation by Bard van de Laar (https://launchpad.net/~bartvdlaar).
+ * German translation by Hendrik Just (https://launchpad.net/~jh30just).
+ * Russian translation by Sergey Sedov (https://launchpad.net/~serg-sedov).
+ * Spanish translation by ana (https://launchpad.net/~anabelle).
 
 **0.61**
 
