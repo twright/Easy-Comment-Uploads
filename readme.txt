@@ -4,7 +4,7 @@ Donate link: http://goo.gl/WFJP6
 Tags: comments, uploads, images
 Requires at least: 3.0.0
 Tested up to: 3.2.1
-Stable tag: 0.61
+Stable tag: 0.70
 
 == Description ==
 
@@ -21,6 +21,7 @@ If you like it please rate it, give feedback or you can support its further deve
 
 **0.70**
 
+ * Fixed compatibility issues with older versions of Internet Explorer.
  * Improved styling of upload form.
  * Thumbnails of images are now generated to increase speed and reduce bandwith usage.
  * Option added to change upload directory.
@@ -180,7 +181,7 @@ http://goo.gl/WFJP6
 
 = Is it available in my language? =
 
-Currently the plugin is available in English and 9 other languages but anyone can translate it using Wordpress's standard tools (see http://codex.wordpress.org/Translating_WordPress for more information). If you translate the plugin then please email me the PO files so that other users can benefit from them as well.
+Currently the plugin is available in English and 10 other languages but anyone can translate it using Wordpress's standard tools (see http://codex.wordpress.org/Translating_WordPress for more information). If you translate the plugin then please email me the PO files so that other users can benefit from them as well.
 
 Alternatively you can translate the plugin online using an easy web interface on launchpad:
 https://translations.edge.launchpad.net/easy-comment-uploads/trunk

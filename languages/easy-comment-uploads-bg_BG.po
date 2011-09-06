@@ -3,10 +3,10 @@
 # Thomas Wright <tom.tdw@gmail.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: easy-comment-uploads\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/easy-comment-uploads\n"
-"POT-Creation-Date: 2011-09-04 22:54:46+00:00\n"
-"PO-Revision-Date: 2011-09-05 00:00+0100\n"
+"POT-Creation-Date: 2011-09-05 21:52:03+00:00\n"
+"PO-Revision-Date: 2011-09-05 23:02+0100\n"
 "Last-Translator: Thomas Wright <tom.tdw@gmail.com>\n"
 "Language-Team: SiteGround\n"
 "Language: bg\n"
@@ -17,23 +17,15 @@ msgstr ""
 "X-Generator: Virtaal 0.7.0\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: main.php:148
+#: main.php:179
 msgid "Upload Files"
 msgstr "Качи файловете"
 
-#: main.php:149
-msgid ""
-"You can include images or files in your comment by selecting them below. "
-"Once you select a file, it will be uploaded and a link to it added to your "
-"comment. You can upload as many images or files as you like and they will "
-"all be added to your comment."
-msgstr ""
-"Може да добавите изображения или файлове към коментара си като ги изберете "
-"отдолу. След като изберете файл, той ще бъде качен на сървъра и ще бъде "
-"добавена връзка към него. Може да качвата колкото изображения желаете. Те "
-"също ще бъдат добавени към вашия коментар."
+#: main.php:190
+msgid "You can include images or files in your comment by selecting them below. Once you select a file, it will be uploaded and a link to it added to your comment. You can upload as many images or files as you like and they will all be added to your comment."
+msgstr "Може да добавите изображения или файлове към коментара си като ги изберете отдолу. След като изберете файл, той ще бъде качен на сървъра и ще бъде добавена връзка към него. Може да качвата колкото изображения желаете. Те също ще бъдат добавени към вашия коментар."
 
-#: main.php:150
+#: upload-form.php:26
 msgid "Select File"
 msgstr "Избери файл"
 

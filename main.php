@@ -2,7 +2,7 @@
 /*
 Plugin Name: Easy Comment Uploads
 Plugin URI: http://wordpress.org/extend/plugins/easy-comment-uploads/
-Description: Allow your users to easily upload images and files in their comments.
+Description: Allow your users to easily upload images and files with their comments.
 Author: Tom Wright
 Version: 0.70
 Author URI: http://gplus.to/twright/
@@ -31,7 +31,7 @@ function ecu_insert_links($comment) {
             $name = get_option('ecu_show_full_file_path') ? $match[2]
                 : $filename[0];
             if ($match[1] == 'img') {
-                $thumbnail = ecu_thumbnail($match[2], 600);
+                $thumbnail = ecu_thumbnail($match[2], 300);
                 $html = "<a href='$match[2]' rel='lightbox[comments]'>"
                     . (get_option('ecu_display_images_as_links') ? "Image: $name"
                     : "<img class='ecu_images' src='$thumbnail' />")
@@ -66,7 +66,8 @@ function ecu_get_whitelist() {
     $default_whitelist = array('odt', 'ods', 'odp', 'doc', 'docx', 'xls',
         'xlsx', 'ppt', 'pptx', 'pdf', 'bmp', 'gif', 'jpg', 'jpeg', 'webp',
         'png', 'mp3', 'ogg', 'wav', 'webm', 'avi', 'mkv', 'mov', 'mp4',
-        'txt', 'psd', 'xcf');
+        'txt', 'psd', 'xcf', 'rtf', 'zip', '7z', 'xz', 'tar', 'gz', 'bz2',
+        'tgz', 'tbz', 'tbz2', 'txz', 'lzma');
     return get_option('ecu_file_extension_whitelist', $default_whitelist);
 }
 
@@ -146,6 +147,7 @@ function ecu_upload_form_preview($display=true) {
 // An iframe containing the upload form
 function ecu_upload_form_iframe() {
     echo "<iframe class='ecu_upload_frame 'scrolling='no' frameborder='0'"
+        . "allowTransparency='true'"
         . " src='" . ecu_plugin_url () . "upload-form.php"
         . "' name='upload_form'></iframe>";
 }

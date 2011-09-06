@@ -113,10 +113,12 @@
             write_html_form("<div class='ecu_preview_file'>"
                 . "<a href='$filelink'>$target_name</a><br />$filecode</div>");
 
-            if ($is_image)
+            if ($is_image) {
+                $thumbnail = ecu_thumbnail($filelink, 300);
                 write_html_form("<a href='$filelink' rel='lightbox[new]'>"
-                    . "<img class='ecu_preview_img' src='$filelink' /></a>"
+                    . "<img class='ecu_preview_img' src='$thumbnail' /></a>"
                     . '<br />');
+            }
 
             ecu_user_record_upload_time();
         } else {
