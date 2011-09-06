@@ -4,7 +4,7 @@ Plugin Name: Easy Comment Uploads
 Plugin URI: http://wordpress.org/extend/plugins/easy-comment-uploads/
 Description: Allow your users to easily upload images and files with their comments.
 Author: Tom Wright
-Version: 0.70
+Version: 0.71
 Author URI: http://gplus.to/twright/
 License: GPLv3
 */
@@ -500,14 +500,18 @@ function ecu_upload_dir_url() {
     }
 }
 
+// Seperate function as closures were not supported before 5.3.0
+function ecu_extract_cat_ID($category) {
+    return $category->cat_ID;
+}
+
 // Are uploads allowed?
 function ecu_allow_upload() {
     global $post;
     $permission_required = get_option('ecu_permission_required');
     $enabled_pages = get_option('ecu_enabled_pages');
     $enabled_category = get_option('ecu_enabled_category');
-    $categories = array_map(function($cat){ return $cat->cat_ID; },
-        get_the_category());
+    $categories = array_map('ecu_extract_cat_ID', get_the_category());
 
     return ($permission_required == 'none'
         || current_user_can($permission_required))

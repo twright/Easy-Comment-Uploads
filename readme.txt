@@ -4,7 +4,7 @@ Donate link: http://goo.gl/WFJP6
 Tags: comments, uploads, images
 Requires at least: 3.0.0
 Tested up to: 3.2.1
-Stable tag: 0.70
+Stable tag: 0.71
 
 == Description ==
 
@@ -18,6 +18,10 @@ If you like it please rate it, give feedback or you can support its further deve
  This version contains many important security improvements. You should upgrade as soon as possible to make sure your site is secure.
 
 == Changelog ==
+
+**0.71**
+
+ * Fix compatibility with PHP versions before 5.3.0.
 
 **0.70**
 
