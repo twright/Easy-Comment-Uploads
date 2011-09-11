@@ -8,9 +8,8 @@
     clear : both;
 }
 
-.ecu_upload_frame {
+#ecu_upload_frame {
 	width : 100%;
-	height : 35px;
 	border: 0px solid #ffffff;
 	margin-top: 0.5em;
 }

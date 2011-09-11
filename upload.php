@@ -73,7 +73,7 @@
             $alert = "Files can not be written to $target_dir. Please make sure that the permissions are set correctly (mode 666)."; 
         } else if (!$is_image && $images_only) {
             $alert = "Sorry, you can only upload images.";
-        } else if (filetype_blacklisted() && !filetype_whitelisted()) {
+        } else if (filetype_blacklisted()) {
             $alert = "You are attempting to upload a file with a"
                 . "disallowed/unsafe filetype!";
         } else if (!filetype_whitelisted() && ecu_get_whitelist()) {

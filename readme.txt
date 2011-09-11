@@ -19,6 +19,12 @@ If you like it please rate it, give feedback or you can support its further deve
 
 == Changelog ==
 
+**0.72**
+
+ * Fix visual issues which occurred with some themes.
+ * Made all remaining strings translatable.
+ * Allow translation of upload form title.
+
 **0.71**
 
  * Fix compatibility with PHP versions before 5.3.0.
@@ -27,7 +33,7 @@ If you like it please rate it, give feedback or you can support its further deve
 
  * Fixed compatibility issues with older versions of Internet Explorer.
  * Improved styling of upload form.
- * Thumbnails of images are now generated to increase speed and reduce bandwith usage.
+ * Thumbnails of images are now generated to increase speed and reduce bandwidth usage.
  * Option added to change upload directory.
  * Fixed some bugs in blacklist checking.
  * Enable the plugin for specific categories only.
@@ -56,12 +62,12 @@ If you like it please rate it, give feedback or you can support its further deve
  * Options reorganised and extended.
  * Manually blacklist file extensions.
  * Optionally allow only certain file extensions.
- * Set limits for uploads per hour based on ip or user for each class of users.
+ * Set limits for uploads per hour based on ip address or user for each class of users.
  * Various bug fixes.
 
 **0.55**
 
- * Small compatibility imporvements.
+ * Small compatibility improvements.
 
 **0.54**
 
@@ -192,15 +198,30 @@ https://translations.edge.launchpad.net/easy-comment-uploads/trunk
 
 = Is it secure? =
 
-The plugin will by default only allow certain types of files which are know to be safe to be uploaded, which should prevent the majority of upload related attacks and has been extensively tested to make sure it as safe as possible. However, as with any plugin, I cannot guarantee that vulnerabilities will not emerge in the future. 
+The plugin will by default only allow certain types of files which are known to be safe to be uploaded, which should prevent the majority of upload related attacks and has been extensively tested to make sure it as safe as possible. However, as with any plugin, I cannot guarantee that vulnerabilities will not emerge in the future. 
 
 In recent versions, many new security features have been added including NONCE checks, and configurable options to restrict file-types, file-sizes and the allowed frequency of uploads for each type of user.
 
 As with all plugins, new versions include security fixes and resolve other bugs so I always recommend running the latest stable version.
 
+= What browsers does it support? =
+
+It should work in any modern browser. It does not require flash but does require JavaScript support.
+
+It has been tested with:
+ * Google Chrome
+ * Firefox (version 3 or higher)
+ * Internet Explorer (version 6 or higher)
+
 = How can I enable Lightboxes =
 
 If you install the Wordpress Lightbox plugin (http://wordpress.org/extend/plugins/lightbox-2/) then all uploaded images may be displayed using Lightbox support.
+
+= Files are uploaded successfully but not displayed in comments =
+
+This is most likely a problem with your theme.
+
+Certain themes (most notably Thesis) do not correctly call the wp_filter_comment function when displaying comments and hence this and some other plugins will not function correctly. I suggest you try contacting the author of your theme.
 
 = I have just thought of an amazing feature your plugin should have, what can I do? =
 
