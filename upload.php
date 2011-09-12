@@ -25,11 +25,16 @@
             }
 
             // Handle standard comment forms
-            comment = parent.parent.document.getElementById("comment")
+            if (parent.parent.document.getElementById("comment")
                 || parent.parent.document.getElementById("comment-p1")
-                || parent.parent.document.forms["commentform"].comment;
-            comment.value = comment.value.replace(/[\n]+$/, '')
-                + (comment.value.length > 0 ? '\n' : '') + text + '\n';
+                || parent.parent.document.forms["commentform"]
+                && parent.parent.document.forms["commentform"].comment) {
+                comment = parent.parent.document.getElementById("comment")
+                    || parent.parent.document.getElementById("comment-p1")
+                    || parent.parent.document.forms["commentform"].comment;
+                comment.value = comment.value.replace(/[\n]+$/, '')
+                    + (comment.value.length > 0 ? '\n' : '') + text + '\n';
+            }
         }
         
         function upload_end() {
@@ -45,7 +50,6 @@
         $target_dir = ecu_upload_dir_path();
         $target_url = ecu_upload_dir_url();
         $images_only = get_option('ecu_images_only');
-        $max_file_size = get_option('ecu_max_file_size');
         $max_post_size = (int)ini_get('post_max_size');
         $max_upload_size = (int)ini_get('upload_max_filesize');
 
@@ -57,8 +61,9 @@
         $target_name = basename($target_path);
 
         /* Debugging info */
-        // $error = (int) $_FILES['file']['error'];
-        // write_js("alert('$error')");
+        #$error = (int) $_FILES['file']['error'];
+        //$file = file_within_size($ext, $lim);
+        //write_js("alert('$file $ext $lim')");
         // sleep(2);
 
         // Default values
@@ -66,45 +71,69 @@
         $filelink = "";
 
         // Detect whether the uploaded file is an image
-        $is_image = preg_match ('/(jpeg|png|gif)/i', $_FILES['file']['type']);
+        $is_image = preg_match('/(jpeg|png|gif)/i',
+            $_FILES['file']['type'])
+            && preg_match('/^[^\\.]+\\.(jpeg|png|jpg|gif)$/i',
+            $_FILES['file']['name']);
         $type = ($is_image) ? "img" : "file";
 
         if (!is_writable($target_dir)) {
-            $alert = "Files can not be written to $target_dir. Please make sure that the permissions are set correctly (mode 666)."; 
+            $alert = sprintf(__('Files can not be written to %s.\n'
+                . 'Please make sure that the permissions are set '
+                . 'correctly (mode 666).'), $target_dir);
+        } else if (empty($_FILES) && empty($_POST)
+            && isset($_SERVER['REQUEST_METHOD'])
+            && strtolower($_SERVER['REQUEST_METHOD']) == 'post') {
+            $alert = sprintf(__('Your file has exceeded the PHP '
+                . 'max_post_size (%u MiB).\n'
+                . 'Please choose a smaller file or ask the website '
+                . 'administrator to update this setting in the '
+                . 'php.ini configuration file',
+                'easy-comment-uploads'), $max_post_size);
+        } else if ($_FILES['file']['error'] == 1) {
+            $alert = sprintf(__('Your file has exceeded the PHP '
+                . 'max_upload_size (%u MiB).\n'
+                . 'Please choose a smaller file or ask the website '
+                . 'administrator to update this setting in the '
+                . 'php.ini configuration file',
+                'easy-comment-uploads'), $max_upload_size);
+        } else if ($FILES['file']['error'] == 3) {
+            $alert = __('Your file was only partially uploaded. '
+                . 'Please try again.', 'easy-comment-uploads');
         } else if (!$is_image && $images_only) {
-            $alert = "Sorry, you can only upload images.";
+            $alert = __('Sorry, you can only upload images.',
+                'easy-comment-uploads');
         } else if (filetype_blacklisted()) {
-            $alert = "You are attempting to upload a file with a"
-                . "disallowed/unsafe filetype!";
+            $alert = __('You are attempting to upload a file with a'
+                . 'disallowed/unsafe filetype!',
+                'easy-comment-uploads');
         } else if (!filetype_whitelisted() && ecu_get_whitelist()) {
-            $alert = 'You may only upload files with the following extensions: '
+            $alert = __('You may only upload files with the '
+                . 'following extensions: ', 'easy-comment-uploads')
                 . implode(', ', ecu_get_whitelist());
-        } else if ($max_file_size != 0
-            && $_FILES['file']['size']/1024 > $max_file_size) {
-            $alert = "The file you've uploaded is too large ("
-                . round($_FILES['file']['size']/1024, 1)
-                . "KiB).\nPlease choose a smaller file and try again (Uploads"
-                . " are limited to $max_file_size KiB).";
+        } else if (!file_within_size($extension, $limit)) {
+            $alert = sprintf(__('The file you have uploaded is too large '
+                . '(%u KiB).\nPlease choose a smaller file and try '
+                . 'again (uploads are limited to %u KiB%s).',
+                'easy-comment-uploads'),
+                round($_FILES['file']['size']/1024, 1),
+                $limit,
+                $extension ? sprintf(__(' for .%s files',
+                    'easy-comment-uploads'), $extension) : '');
         } else if (ecu_user_uploads_per_hour() != -1
             && ecu_user_uploads_in_last_hour()
             >= ecu_user_uploads_per_hour()) {
-            $alert = "You are only permitted to upload "
-                . (string)ecu_user_uploads_per_hour() . " files per hour.";
-        } else if ($_FILES['file']['error'] == 1
-            || $_FILES['file']['error'] == 2) {
-            $alert = 'Your file has exceeded the php max_upload_size ('
-                . "$max_upload_size MiB) or max_post_size ("
-                . "$max_post_size MiB). Please choose a"
-                . ' smaller file or ask the website administrator to'
-                . ' increase the relevant settings in the php.ini file.';
+            $alert = sprintf(__('You are only permitted to upload %u '
+                . 'files per hour.', 'easy-comment-uploads'),
+                ecu_user_uploads_per_hour());
         } else if (!wp_verify_nonce($_REQUEST['_wpnonce'],
             'ecu_upload_form')) {
             // Check referer
-            $alert = 'Invalid Referrer';
+            $alert = __('Invalid Referrer!');
         } else if (move_uploaded_file($_FILES['file']['tmp_name'],
             $target_path)) {
             $filelink = $target_url . $target_name;
-            $filecode = "[$type]$filelink" . "[/$type]";
+            $filecode = "[$type]$filelink\[/$type]";
 
             // Add the filecode to the comment form
             write_js("write_comment('$filecode');");
@@ -122,8 +151,8 @@
 
             ecu_user_record_upload_time();
         } else {
-            $alert = 'There was an error uploading the file, '
-                . 'please try again!';
+            $alert = __('There was an error uploading the file, '
+                . 'please try again!', 'easy-comment-uploads');
         }
         
         write_js('upload_end()');
@@ -144,6 +173,20 @@
             $whitelist = ecu_get_whitelist();
             return preg_match('/^[^\\.]+\\.(' . implode('|', $whitelist)
                 . ')$/i', $_FILES['file']['name']);
+        }
+        
+        // Check whether file in within size
+        function file_within_size(&$extension, &$limit) {
+            $extension = '';
+            $limits = get_option('ecu_per_filetype_upload_limits');
+            $limit = get_option('ecu_max_file_size');
+            if (preg_match('/(?<=\.)[a-z0-9]+$/i',
+                $_FILES['file']['name'], $matches)
+                && array_key_exists($matches[0], $limits)) {
+                $extension = $matches[0];
+                $limit = $limits[$extension];
+            }
+            return $limit == 0 || $_FILES['file']['size'] < $limit*1024;
         }
 
         // Write script as js to the page
@@ -169,7 +212,8 @@
             $prototype_parts = pathinfo ($prototype);
             $ext = $prototype_parts['extension'];
             $dir = $prototype_parts['dirname'];
-            $name = sanitize_file_name(filter_var($prototype_parts['filename'], FILTER_SANITIZE_URL));
+            $name = sanitize_file_name(filter_var($prototype_parts['filename'],
+                FILTER_SANITIZE_URL));
             $dot = $ext == '' ? '' : '.';
             if (!file_exists("$dir/$name.$ext")) {
                 return "$dir/$name$dot$ext";

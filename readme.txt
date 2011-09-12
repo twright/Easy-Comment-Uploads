@@ -21,9 +21,11 @@ If you like it please rate it, give feedback or you can support its further deve
 
 **0.72**
 
+ * Set size limits for specific file extensions.
+ * Error handling improvements.
  * Fix visual issues which occurred with some themes.
  * Made all remaining strings translatable.
- * Allow translation of upload form title.
+ * Allow changing of upload form title.
 
 **0.71**
 

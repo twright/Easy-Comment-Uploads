@@ -290,13 +290,21 @@ function ecu_options_page() {
             else
                 update_option('ecu_upload_dir_path', $_POST['upload_dir_path']);
 
+        if (isset($_POST['per_filetype_upload_limits'])) {
+            $limits = array();
+            foreach (explode("\n", $_POST['per_filetype_upload_limits'])
+                as $line)
+                if (preg_match('/([a-z0-9]+),\s([1-9][0-9]*)/i',
+                    $line, $matches))
+                    $limits[$matches[1]] = $matches[2];
+            update_option('ecu_per_filetype_upload_limits', $limits);
+        }
+            
         // Inform user
         echo '<div id="message" class="updated fade"><p>'
             . 'Easy Comment Uploads options saved.'
             . '</p></div>';
     }
-
-    update_user_meta(get_current_user_id(), 'ecu_test', 'test');
 
     // Store current values for fields
     $images_only = (get_option('ecu_images_only')) ? 'checked' : '';
@@ -305,8 +313,8 @@ function ecu_options_page() {
     $display_images_as_links = (get_option('ecu_display_images_as_links') ? 'checked' : '');
     $premission_required = array();
     foreach (array('none', 'read', 'edit_posts', 'upload_files') as $elem)
-        $permission_required[] =
-            ((get_option('ecu_permission_required') == $elem) ? 'checked' : '');
+        $permission_required[] = (get_option('ecu_permission_required')
+            == $elem) ? 'checked' : '';
     $max_file_size = get_option('ecu_max_file_size');
     $enabled_pages = get_option('ecu_enabled_pages');
     $enabled_category = get_option('ecu_enabled_category');
@@ -318,6 +326,11 @@ function ecu_options_page() {
     $upload_form_heading = ecu_upload_form_heading();
     $upload_form_text = ecu_message_text();
     $upload_dir_path = get_option('ecu_upload_dir_path');
+    $per_filetype_upload_limits = '';
+    foreach (get_option('ecu_per_filetype_upload_limits')
+        as $extension => $limit)
+        $per_filetype_upload_limits .= "\n$extension, $limit";
+    $per_filetype_upload_limits = substr($per_filetype_upload_limits, 1);
 
     // Info for form
     $actionurl = $_SERVER['REQUEST_URI'];
@@ -397,6 +410,20 @@ function ecu_options_page() {
             . '\'default\' to restore the default list',
             'easy-comment-uploads'); ?>)
         </label>
+        </li>
+        
+        <li>
+            <label for="per_filetype_upload_limits">
+                <?php _e('List of file extensions and size limits '
+                    . '(an extenstion and a limit in KiB per line, '
+                    . 'seperated by a comma e.g png, 2000)',
+                    'easy-comment-uploads'); ?>:
+            </label>
+            <br />
+            <textarea id="per_filetype_upload_limits"
+                name="per_filetype_upload_limits"
+                style="width : 100%; height : 65pt"
+                ><?php echo $per_filetype_upload_limits; ?></textarea>
         </li>
         
         <li>
@@ -536,7 +563,8 @@ function ecu_options_page() {
             </label>
             <br />
             <textarea id="upload_form_text" name="upload_form_text"
-                style="width : 100%; height : 65pt"><?php echo $upload_form_text; ?></textarea>
+                style="width : 100%; height : 65pt"
+                ><?php echo $upload_form_text; ?></textarea>
         </li>
 
         <li>
@@ -556,7 +584,7 @@ function ecu_options_page() {
                 value="<?php echo $enabled_category; ?>" />
             <br />
             <label for="enabled_category">
-            (<a href= "http://www.wprecipes.com/how-to-find-wordpress-category-id"
+            (<a href="http://www.wprecipes.com/how-to-find-wordpress-category-id"
             ><?php _e('category id', 'easy-comment-uploads'); ?></a>
             <?php _e('or leave blank to enable globally',
             'easy-comment-uploads'); ?>)
@@ -690,6 +718,8 @@ function ecu_initial_options() {
                 'read' => 10,
                 'none' => 5,
             ));
+    if (get_option('ecu_per_filetype_upload_limits') === false)
+        update_option('ecu_per_filetype_upload_limits', array());
 }
 
 // Set textdomain for translations (i18n)

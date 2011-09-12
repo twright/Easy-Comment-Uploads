@@ -28,7 +28,7 @@
         }
     </script>
 </head>
-<body>
+<body style='min-width: 0 !important;'>
     <form target='hiddenframe' enctype='multipart/form-data'
     action='<?php echo ecu_plugin_url() . 'upload.php' ?>'
     method='POST' name='uploadform' id='uploadform'>
