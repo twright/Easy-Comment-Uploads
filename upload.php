@@ -34,6 +34,7 @@
                     || parent.parent.document.forms["commentform"].comment;
                 comment.value = comment.value.replace(/[\n]+$/, '')
                     + (comment.value.length > 0 ? '\n' : '') + text + '\n';
+                return;
             }
         }
         
@@ -88,16 +89,16 @@
                 . 'max_post_size (%u MiB).\n'
                 . 'Please choose a smaller file or ask the website '
                 . 'administrator to update this setting in the '
-                . 'php.ini configuration file',
+                . 'php.ini configuration file.',
                 'easy-comment-uploads'), $max_post_size);
-        } else if ($_FILES['file']['error'] == 1) {
+        } else if ($_FILES['file']['error'] == UPLOAD_ERR_INI_SIZE) {
             $alert = sprintf(__('Your file has exceeded the PHP '
                 . 'max_upload_size (%u MiB).\n'
                 . 'Please choose a smaller file or ask the website '
                 . 'administrator to update this setting in the '
-                . 'php.ini configuration file',
+                . 'php.ini configuration file.',
                 'easy-comment-uploads'), $max_upload_size);
-        } else if ($FILES['file']['error'] == 3) {
+        } else if ($FILES['file']['error'] == UPLOAD_ERR_PARTIAL) {
             $alert = __('Your file was only partially uploaded. '
                 . 'Please try again.', 'easy-comment-uploads');
         } else if (!$is_image && $images_only) {
