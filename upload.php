@@ -151,6 +151,8 @@
             }
 
             ecu_user_record_upload_time();
+            if (get_option('ecu_media_library_insertion'))
+                ecu_insert_attachment($target_path);
         } else {
             $alert = __('There was an error uploading the file, '
                 . 'please try again!', 'easy-comment-uploads');

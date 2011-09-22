@@ -208,6 +208,23 @@ function ecu_options_menu() {
         add_plugins_page('Easy Comment Uploads options',
             'Easy Comment Uploads', 8, __FILE__, 'ecu_options_page');
 }
+
+// Add an image to the media library
+function ecu_insert_attachment($filename) {
+    $wp_filetype = wp_check_filetype(basename($filename), null);
+    $attachment = array(
+        'post_mime_type' => $wp_filetype['type'],
+        'post_title' => preg_replace('/\.[^.]+$/', '',
+            basename($filename)),
+        'post_content' => '',
+        'post_status' => 'inherit'
+    );
+    $attachment_id = wp_insert_attachment($attachment, $filename);
+    require_once(ABSPATH . 'wp-admin/includes/image.php');
+    $attachment_data = wp_generate_attachment_metadata($attachment_id,
+        $filename);
+    wp_update_attachment_metadata($attachment_id, $attachment_data);
+}
  
 // Provide an options page in wp-admin
 function ecu_options_page() {
@@ -216,52 +233,42 @@ function ecu_options_page() {
         check_admin_referer('easy-comment-uploads');
 
         // Update options
-        update_option ('ecu_images_only', $_POST['images_only'] != null);
-        if (isset($_POST['permission_required']))
-            update_option ('ecu_permission_required',
-                $_POST['permission_required']);
-        update_option ('ecu_hide_comment_form',
-            (int) ($_POST['hide_comment_form'] != null));
-        update_option ('ecu_show_full_file_path',
-            (int) ($_POST['show_full_file_path'] != null));
-        update_option ('ecu_display_images_as_links',
-            (int) ($_POST['display_images_as_links'] != null));
-        if (isset($_POST['max_file_size'])
-            && preg_match ('/[0-9]+/', $_POST['max_file_size'])
-            && $_POST['max_file_size'] >= 0)
-            update_option ('ecu_max_file_size', $_POST['max_file_size']);
-        if (isset($_POST['upload_files_uploads_per_hour'])
-            && preg_match ('/[-]?[0-9]+/', $_POST['upload_files_uploads_per_hour'])
-            && $_POST['upload_files_uploads_per_hour'] >= -1)
-            $uploads_per_hour = get_option('ecu_uploads_per_hour');
-            $uploads_per_hour['upload_files'] = $_POST['upload_files_uploads_per_hour'];
-            update_option('ecu_uploads_per_hour', $uploads_per_hour);
-        if (isset($_POST['edit_posts_uploads_per_hour'])
-            && preg_match ('/[-]?[0-9]+/', $_POST['edit_posts_uploads_per_hour'])
-            && $_POST['edit_posts_uploads_per_hour'] >= -1)
-            $uploads_per_hour = get_option('ecu_uploads_per_hour');
-            $uploads_per_hour['edit_posts'] = $_POST['edit_posts_uploads_per_hour'];
-            update_option('ecu_uploads_per_hour', $uploads_per_hour);
-        if (isset($_POST['read_uploads_per_hour'])
-            && preg_match ('/[-]?[0-9]+/', $_POST['read_uploads_per_hour'])
-            && $_POST['read_uploads_per_hour'] >= -1)
-            $uploads_per_hour = get_option('ecu_uploads_per_hour');
-            $uploads_per_hour['read'] = $_POST['read_uploads_per_hour'];
-            update_option('ecu_uploads_per_hour', $uploads_per_hour);
-        if (isset($_POST['none_uploads_per_hour'])
-            && preg_match ('/[-]?[0-9]+/', $_POST['none_uploads_per_hour'])
-            && $_POST['none_uploads_per_hour'] >= -1)
-            $uploads_per_hour = get_option('ecu_uploads_per_hour');
-            $uploads_per_hour['none'] = $_POST['none_uploads_per_hour'];
-            update_option('ecu_uploads_per_hour', $uploads_per_hour);
+        
+        // Upload Form
+        if (isset($_POST['upload_form_heading']))
+            update_option('ecu_upload_form_heading',
+                $_POST['upload_form_heading']);
+        if (isset($_POST['upload_form_text']))
+            update_option('ecu_message_text',
+            $_POST['upload_form_text']);
+        if (isset($_POST['upload_form_visibility'])
+            && in_array($_POST['upload_form_visibility'],
+            array('all', 'category', 'pages', 'none')))
+            update_option('ecu_upload_form_visibility',
+                $_POST['upload_form_visibility']);
+        if (isset($_POST['enabled_category'])
+            && preg_match('/^([1-9][0-9]*)?$/',
+            $_POST['enabled_category']))
+            update_option('ecu_enabled_category',
+            $_POST['enabled_category']);
         if (isset($_POST['enabled_pages'])
             && preg_match('/^[1-9][0-9]*(, [1-9][0-9]*)?|$/',
             $_POST['enabled_pages']))
             update_option('ecu_enabled_pages', explode(', ',
                 $_POST['enabled_pages']));
-        if (isset($_POST['enabled_category'])
-            && preg_match('/^([1-9][0-9]*)?$/', $_POST['enabled_category']))
-            update_option('ecu_enabled_category', $_POST['enabled_category']);
+                
+        // Comments
+        update_option ('ecu_show_full_file_path',
+            (int) ($_POST['show_full_file_path'] != null));
+        update_option ('ecu_display_images_as_links',
+            (int) ($_POST['display_images_as_links'] != null));
+            
+        // Files
+        update_option ('ecu_images_only', $_POST['images_only'] != null);
+        if (isset($_POST['max_file_size'])
+            && preg_match ('/[0-9]+/', $_POST['max_file_size'])
+            && $_POST['max_file_size'] >= 0)
+            update_option ('ecu_max_file_size', $_POST['max_file_size']);
         if (isset($_POST['file_extension_blacklist'])
             && $_POST['file_extension_blacklist'] != implode(', ',
                 ecu_get_blacklist())
@@ -272,7 +279,8 @@ function ecu_options_page() {
             else if ($_POST['file_extension_blacklist'] == 'none')
                 update_option('ecu_file_extension_blacklist', array());
             else update_option('ecu_file_extension_blacklist',
-                preg_split("/[, ][ ]*/", $_POST['file_extension_blacklist']));
+                preg_split("/[, ][ ]*/",
+                $_POST['file_extension_blacklist']));
         if (isset($_POST['file_extension_whitelist'])
             && preg_match('/^[a-z0-9]+([, ][ ]*[a-z0-9]+)*$/i',
             $_POST['file_extension_whitelist']))
@@ -281,23 +289,8 @@ function ecu_options_page() {
             else if ($_POST['file_extension_whitelist'] == 'ignore')
                 update_option('ecu_file_extension_whitelist', array());
             else update_option('ecu_file_extension_whitelist',
-                preg_split("/[, ][ ]*/", $_POST['file_extension_whitelist']));
-        if (isset($_POST['upload_form_heading']))
-            update_option('ecu_upload_form_heading',
-                $_POST['upload_form_heading']);
-        if (isset($_POST['upload_form_text']))
-            update_option('ecu_message_text', $_POST['upload_form_text']);
-        if (isset($_POST['upload_dir_path']))
-            if ($_POST['upload_dir_path'] == '')
-                delete_option('ecu_upload_dir_path');
-            else
-                update_option('ecu_upload_dir_path', $_POST['upload_dir_path']);
-        if (isset($_POST['upload_form_visibility'])
-            && in_array($_POST['upload_form_visibility'],
-            array('all', 'category', 'pages', 'none')))
-            update_option('ecu_upload_form_visibility',
-                $_POST['upload_form_visibility']);
-
+                preg_split("/[, ][ ]*/",
+                $_POST['file_extension_whitelist']));
         if (isset($_POST['per_filetype_upload_limits'])) {
             $limits = array();
             foreach (explode("\n", $_POST['per_filetype_upload_limits'])
@@ -307,6 +300,49 @@ function ecu_options_page() {
                     $limits[$matches[1]] = $matches[2];
             update_option('ecu_per_filetype_upload_limits', $limits);
         }
+        if (isset($_POST['upload_dir_path']))
+            if ($_POST['upload_dir_path'] == '')
+                delete_option('ecu_upload_dir_path');
+            else
+                update_option('ecu_upload_dir_path',
+                $_POST['upload_dir_path']);
+        update_option ('ecu_media_library_insertion',
+            (int) ($_POST['media_library_insertion'] != null));
+                
+        // User Permissions
+        if (isset($_POST['permission_required']))
+            update_option ('ecu_permission_required',
+                $_POST['permission_required']);
+        if (isset($_POST['upload_files_uploads_per_hour'])
+            && preg_match ('/[-]?[0-9]+/',
+            $_POST['upload_files_uploads_per_hour'])
+            && $_POST['upload_files_uploads_per_hour'] >= -1)
+            $uploads_per_hour = get_option('ecu_uploads_per_hour');
+            $uploads_per_hour['upload_files']
+                = $_POST['upload_files_uploads_per_hour'];
+            update_option('ecu_uploads_per_hour', $uploads_per_hour);
+        if (isset($_POST['edit_posts_uploads_per_hour'])
+            && preg_match ('/[-]?[0-9]+/',
+            $_POST['edit_posts_uploads_per_hour'])
+            && $_POST['edit_posts_uploads_per_hour'] >= -1)
+            $uploads_per_hour = get_option('ecu_uploads_per_hour');
+            $uploads_per_hour['edit_posts']
+            = $_POST['edit_posts_uploads_per_hour'];
+            update_option('ecu_uploads_per_hour', $uploads_per_hour);
+        if (isset($_POST['read_uploads_per_hour'])
+            && preg_match ('/[-]?[0-9]+/',
+            $_POST['read_uploads_per_hour'])
+            && $_POST['read_uploads_per_hour'] >= -1)
+            $uploads_per_hour = get_option('ecu_uploads_per_hour');
+            $uploads_per_hour['read'] = $_POST['read_uploads_per_hour'];
+            update_option('ecu_uploads_per_hour', $uploads_per_hour);
+        if (isset($_POST['none_uploads_per_hour'])
+            && preg_match ('/[-]?[0-9]+/',
+            $_POST['none_uploads_per_hour'])
+            && $_POST['none_uploads_per_hour'] >= -1)
+            $uploads_per_hour = get_option('ecu_uploads_per_hour');
+            $uploads_per_hour['none'] = $_POST['none_uploads_per_hour'];
+            update_option('ecu_uploads_per_hour', $uploads_per_hour);
             
         // Inform user
         echo '<div id="message" class="updated fade"><p>'
@@ -315,13 +351,15 @@ function ecu_options_page() {
     }
 
     // Store current values for fields
-    $images_only = (get_option('ecu_images_only')) ? 'checked' : '';
-    $hide_comment_form = (get_option('ecu_hide_comment_form') ? 'checked' : '');
-    $show_full_file_path = (get_option('ecu_show_full_file_path') ? 'checked' : '');
+    $images_only = get_option('ecu_images_only') ? 'checked' : '';
+    $hide_comment_form = get_option('ecu_hide_comment_form')
+        ? 'checked' : '';
+    $show_full_file_path = get_option('ecu_show_full_file_path')
+        ? 'checked' : '';
     $display_images_as_links = (get_option('ecu_display_images_as_links') ? 'checked' : '');
     $premission_required = array();
     foreach (array('none', 'read', 'edit_posts', 'upload_files') as $elem)
-        $permission_required[] = (get_option('ecu_permission_required')
+        $permission_required[$elem] = (get_option('ecu_permission_required')
             == $elem) ? 'checked' : '';
     $max_file_size = get_option('ecu_max_file_size');
     $enabled_pages = implode(', ', get_option('ecu_enabled_pages'));
@@ -342,6 +380,8 @@ function ecu_options_page() {
     $upload_form_visibility_checked = array(
         get_option('ecu_upload_form_visibility') => 'checked="checked"'
     );
+    $media_library_insertion = get_option('ecu_media_library_insertion')
+        ? 'checked' : '';
 
     // Info for form
     $actionurl = $_SERVER['REQUEST_URI'];
@@ -636,6 +676,23 @@ function ecu_options_page() {
                     </span>
                 </td>
             </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <?php _e('Media library integration',
+                        'easy-comment-uploads'); ?>
+                </th>
+                <td>
+                    <label for="media_library_insertion">
+                        <input id="media_library_insertion"
+                            type="checkbox"
+                            name="media_library_insertion"
+                            <?php echo $media_library_insertion ?> />
+                        <?php _e('Insert uploaded files into Wordpress '
+                            . 'media library',
+                            'easy-comment-uploads'); ?>
+                    </label>
+                </td>
+            </tr>
         </tbody>
         </table>
 
@@ -662,7 +719,7 @@ function ecu_options_page() {
         </thead>
         <tbody>
             <tr>
-                <th>
+                <th scope="row">
                 <?php _e('Users with upload rights',
                     'easy-comment-uploads'); ?>
                 <br />
@@ -671,60 +728,59 @@ function ecu_options_page() {
                 </th>
                 <td>
                     <input id="upload_rights_only" type="radio"
-                        name="permission_required" value="read"
-                        <?php echo $permission_required[3] ?> />
+                        name="permission_required" value="upload_files"
+                        <?php echo $permission_required['upload_files'] ?>
+                        />
                 </td>
                 <td>
                 <input id="upload_files_uploads_per_hour" type="text"
                     name="upload_files_uploads_per_hour" class="small-text"
-                    value="<?php echo $uploads_per_hour[upload_files] ?>" />
+                    value="<?php echo $uploads_per_hour['upload_files'] ?>" />
                 </td>
             </tr>
             <tr>
-                <th>
+                <th scope="row">
                 <?php _e('Contributors', 'easy-comment-uploads'); ?>
                 </th>
                 <td>
                     <input id="edit_rights_only" type="radio"
                         name="permission_required" value="edit_posts"
-                        <?php $permission_required[2] ?> />
+                        <?php echo $permission_required['edit_posts'] ?> />
                 </td>
                 <td>
                 <input id="edit_posts_uploads_per_hour" type="text"
                     name="edit_posts_uploads_per_hour" class="small-text"
-                    value="<?php echo $uploads_per_hour[edit_posts]; ?>" />
+                    value="<?php echo $uploads_per_hour['edit_posts']; ?>" />
                 </td>
             </tr>
             <tr>
-                <th>
+                <th scope="row">
                 <?php _e('Registered users', 'easy-comment-uploads'); ?>
                 </th>
                 <td>
                     <input id="registered_users_only" type="radio"
-                        name="permission_required"
-                        value="upload_files"
-                        <?php echo $permission_required[1] ?> />
+                        name="permission_required" value="read"
+                        <?php echo $permission_required['read'] ?> />
                 </td>
                 <td>
                 <input id="read_uploads_per_hour" type="text"
                     name="read_uploads_per_hour" class="small-text"
-                    value="<?php echo $uploads_per_hour[read] ?>" />
+                    value="<?php echo $uploads_per_hour['read'] ?>" />
                 </td>
             </tr>
             <tr>
-                <th>
+                <th scope="row">
                 <?php _e('Unregistered users', 'easy-comment-uploads'); ?>
                 </th>
                 <td>
                     <input id="all_users" type="radio"
-                        name="permission_required"
-                        value="none"
-                        <?php echo $permission_required[0] ?> />
+                        name="permission_required" value="none"
+                        <?php echo $permission_required['none'] ?> />
                 </td>
                 <td>
                 <input id="none_uploads_per_hour" type="text"
                     name="none_uploads_per_hour" class="small-text"
-                    value="<?php echo $uploads_per_hour[none]; ?>" />
+                    value="<?php echo $uploads_per_hour['none']; ?>" />
                 </td>
             </tr>
         </tbody>
@@ -843,6 +899,8 @@ function ecu_initial_options() {
         update_option('ecu_upload_form_visibility', 'all');
     if (get_option('ecu_per_filetype_upload_limits') === false)
         update_option('ecu_per_filetype_upload_limits', array());
+    if (get_option('ecu_media_library_insertion') === false)
+        update_option('ecu_media_library_insertion', false);
 }
 
 // Set textdomain for translations (i18n)

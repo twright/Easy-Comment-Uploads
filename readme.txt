@@ -19,8 +19,9 @@ If you like it please rate it, give feedback or you can support its further deve
 
 == Changelog ==
 
-**0.72**
+**1.00**
 
+ * Media library integration.
  * Redesigned options page.
  * Set size limits for specific file extensions.
  * Error handling improvements.
