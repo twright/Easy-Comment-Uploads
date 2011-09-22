@@ -21,6 +21,7 @@ If you like it please rate it, give feedback or you can support its further deve
 
 **0.72**
 
+ * Redesigned options page.
  * Set size limits for specific file extensions.
  * Error handling improvements.
  * Fix visual issues which occurred with some themes.
