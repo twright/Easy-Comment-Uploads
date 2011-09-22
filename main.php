@@ -189,7 +189,7 @@ function ecu_upload_form_default($check=true) {
 // Upload form heading
 function ecu_upload_form_heading() {
     if (get_option('ecu_upload_form_heading'))
-        return wp_kses(get_option('ecu_upload_form_heading'));
+        return wp_kses(get_option('ecu_upload_form_heading'), array());
     else
         return __('Upload Files', 'easy-comment-uploads');
 }
