@@ -64,11 +64,12 @@ function ecu_get_blacklist() {
 // A list of file extensions which should not be harmful
 function ecu_get_whitelist() {
     $default_whitelist = array('odt', 'ods', 'odp', 'doc', 'docx', 'xls',
-        'xlsx', 'ppt', 'pptx', 'pdf', 'bmp', 'gif', 'jpg', 'jpeg', 'webp',
-        'png', 'mp3', 'ogg', 'wav', 'webm', 'avi', 'mkv', 'mov', 'mp4',
-        'txt', 'psd', 'xcf', 'rtf', 'zip', '7z', 'xz', 'tar', 'gz', 'bz2',
-        'tgz', 'tbz', 'tbz2', 'txz', 'lzma');
-    return get_option('ecu_file_extension_whitelist', $default_whitelist);
+        'xlsx', 'ppt', 'pptx', 'pdf', 'bmp', 'gif', 'jpg', 'jpeg',
+        'webp', 'png', 'mp3', 'ogg', 'wav', 'webm', 'avi', 'mkv', 
+        'mov', 'mp4', 'txt', 'psd', 'xcf', 'rtf', 'zip', '7z', 'xz',
+        'tar', 'gz', 'bz2', 'tgz', 'tbz', 'tbz2', 'txz', 'lzma');
+    return get_option('ecu_file_extension_whitelist',
+        $default_whitelist);
 }
 
 // Get user ip address
@@ -188,7 +189,7 @@ function ecu_upload_form_default($check=true) {
 // Upload form heading
 function ecu_upload_form_heading() {
     if (get_option('ecu_upload_form_heading'))
-        return get_option('ecu_upload_form_heading');
+        return wp_kses(get_option('ecu_upload_form_heading'));
     else
         return __('Upload Files', 'easy-comment-uploads');
 }
@@ -196,7 +197,7 @@ function ecu_upload_form_heading() {
 // Get message text
 function ecu_message_text() {
     if (get_option('ecu_message_text'))
-        return get_option('ecu_message_text');
+        return wp_kses_data(get_option('ecu_message_text'));
     else
         return __('You can include images or files in your comment by selecting them below. Once you select a file, it will be uploaded and a link to it added to your comment. You can upload as many images or files as you like and they will all be added to your comment.', 'easy-comment-uploads');
 }
@@ -254,9 +255,11 @@ function ecu_options_page() {
             $uploads_per_hour['none'] = $_POST['none_uploads_per_hour'];
             update_option('ecu_uploads_per_hour', $uploads_per_hour);
         if (isset($_POST['enabled_pages'])
-            && preg_match('/^(all)|(([0-9]+ )*[0-9]+)$/', $_POST['enabled_pages']))
-            update_option('ecu_enabled_pages', $_POST['enabled_pages']);
-        if (isset($_POST['enabled_pages'])
+            && preg_match('/^[1-9][0-9]*(, [1-9][0-9]*)?|$/',
+            $_POST['enabled_pages']))
+            update_option('ecu_enabled_pages', explode(', ',
+                $_POST['enabled_pages']));
+        if (isset($_POST['enabled_category'])
             && preg_match('/^([1-9][0-9]*)?$/', $_POST['enabled_category']))
             update_option('ecu_enabled_category', $_POST['enabled_category']);
         if (isset($_POST['file_extension_blacklist'])
@@ -289,6 +292,11 @@ function ecu_options_page() {
                 delete_option('ecu_upload_dir_path');
             else
                 update_option('ecu_upload_dir_path', $_POST['upload_dir_path']);
+        if (isset($_POST['upload_form_visibility'])
+            && in_array($_POST['upload_form_visibility'],
+            array('all', 'category', 'pages', 'none')))
+            update_option('ecu_upload_form_visibility',
+                $_POST['upload_form_visibility']);
 
         if (isset($_POST['per_filetype_upload_limits'])) {
             $limits = array();
@@ -316,7 +324,7 @@ function ecu_options_page() {
         $permission_required[] = (get_option('ecu_permission_required')
             == $elem) ? 'checked' : '';
     $max_file_size = get_option('ecu_max_file_size');
-    $enabled_pages = get_option('ecu_enabled_pages');
+    $enabled_pages = implode(', ', get_option('ecu_enabled_pages'));
     $enabled_category = get_option('ecu_enabled_category');
     $file_extension_blacklist = ecu_get_blacklist() ?
         implode(', ', ecu_get_blacklist()) : 'none';
@@ -331,6 +339,9 @@ function ecu_options_page() {
         as $extension => $limit)
         $per_filetype_upload_limits .= "\n$extension, $limit";
     $per_filetype_upload_limits = substr($per_filetype_upload_limits, 1);
+    $upload_form_visibility_checked = array(
+        get_option('ecu_upload_form_visibility') => 'checked="checked"'
+    );
 
     // Info for form
     $actionurl = $_SERVER['REQUEST_URI'];
@@ -350,7 +361,7 @@ function ecu_options_page() {
                 'easy-comment-uploads');
         ?>
         <input type="submit" class="button-primary"
-        style='margin-left: 1em' name="donate"
+        style="margin-left: 1em" name="donate"
         value="<?php _e('Donate', 'easy-comment-uploads'); ?>" />
     </p>
     </a>
@@ -360,274 +371,364 @@ function ecu_options_page() {
         <input type="hidden" name="submitted" value="1" />
         <?php wp_nonce_field('easy-comment-uploads'); ?>
 
+        <h3><?php _e('Upload Form', 'easy-comment-uploads'); ?></h3>
+        <table class="form-table" id="files-table">
+        <tbody>
+            <tr valign="top">
+                <th scope="row">
+                    <label for="upload_form_heading">
+                        <?php _e('Title',
+                            'easy-comment-uploads') ?>
+                    </label>
+                </th>
+                <td>
+                    <input id="upload_form_heading" type="text"
+                        name="upload_form_heading" class='regular-text'
+                        value="<?php echo $upload_form_heading ?>" />
+                    <span class="description">
+                        <?php _e('Title shown above upload form '
+                            . '(leave blank for default text).',
+                            'easy-comment-uploads'); ?>
+                    </span>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <label for="upload_form_text">
+                        <?php _e('Descriptive text',
+                            'easy-comment-uploads') ?>
+                    </label>
+                </th>
+                <td>
+                    <textarea id="upload_form_text"
+                        name="upload_form_text"
+                        style="width : 100%; height : 80pt"
+                        ><?php echo $upload_form_text ?></textarea>
+                    <span class="description">
+                        <?php _e('Text explaining use of the upload '
+                            . 'form (leave blank for default text; '
+                            . 'basic html tags allowed).',
+                            'easy-comment-uploads'); ?>
+                    </span>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <?php _e('Visibility', 'easy-comment-uploads'); ?>
+                </th>
+                <td>
+                    <fieldset>
+                        <label for="upload_form_visibility_all">
+                            <input type="radio"
+                                id="upload_form_visibility_all"
+                                name="upload_form_visibility"
+                                value="all"
+                                <?php echo $upload_form_visibility_checked['all'] ?> />
+                            <?php _e('Show in all comment forms',
+                                'easy-comment-uploads'); ?>
+                        </label>
+                        <br />
+                        <label for="upload_form_visibility_category">
+                            <input type="radio"
+                                id="upload_form_visibility_category"
+                                name="upload_form_visibility"
+                                value="category"
+                                <?php echo $upload_form_visibility_checked['category'] ?> />
+                            <?php _e('Show only in category',
+                                'easy-comment-uploads'); ?>
+                            <?php
+                            $args = array('hide_empty' => 0,
+                                'name' => 'enabled_category',
+                                'selected' => $enabled_category,
+                                'orderby' => 'name',
+                                'hierarchical' => true);
+                            wp_dropdown_categories($args); 
+                            ?>
+                        </label>
+                        <br />
+                        <label for="upload_form_visibility_pages">
+                            <input type="radio"
+                                id="upload_form_visibility_pages"
+                                name="upload_form_visibility"
+                                value="pages"
+                                <?php echo $upload_form_visibility_checked['pages'] ?> />
+                            <?php _e('Show only for these <a href="http://www.techtrot.com/wordpress-page-id/">page/post IDs</a>',
+                                'easy-comment-uploads'); ?>
+                            <input id="enabled_pages" type="text"           
+                                name="enabled_pages" class="large-text"
+                                placeholder="ID1, ID2, ID3, ..."
+                                pattern="^[1-9][0-9]*(, [1-9][0-9]*)?|$"
+                                value="<?php echo $enabled_pages; ?>" />
+                        </label>
+                        <br />
+                        <label for="upload_form_visibility_none">
+                            <input type="radio"
+                                id="upload_form_visibility_none"
+                                name="upload_form_visibility"
+                                value="none"
+                                <?php echo $upload_form_visibility['none'] ?> />
+                            <?php _e('Hide from all comment forms',
+                                'easy-comment-uploads'); ?>
+                        </label>
+                    </fieldset>
+                </td>
+            </tr>
+        </tbody>
+        </table>
+        
+        <h3><?php _e('Comments', 'easy-comment-uploads'); ?></h3>
+        <table class="form-table" id="files-table">
+        <tbody>
+            <tr valign="top">
+                <th scope="row">
+                    <?php _e('Show full url', 'easy-comment-uploads'); ?>
+                </th>
+                <td>
+                    <label for="show_full_file_path">
+                        <input id="show_full_file_path" type="checkbox"
+                            name="show_full_file_path"
+                            <?php echo $show_full_file_path ?> />
+                        <?php _e('Show full url in links to files',
+                            'easy-comment-uploads'); ?>
+                    </label>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <?php _e('Images as links', 'easy-comment-uploads'); ?>
+                </th>
+                <td>
+                    <label for="display_images_as_links">
+                        <input type="checkbox"
+                            id="display_images_as_links"
+                            name="display_images_as_links"
+                            <?php echo $show_full_file_path ?> />
+                        <?php _e('Replace images with links',
+                            'easy-comment-uploads'); ?>
+                    </label>
+                </td>
+            </tr>
+        </tbody>
+        </table>
+
         <h3><?php _e('Files', 'easy-comment-uploads'); ?></h3>
+        <table class="form-table" id="files-table">
+        <tbody>
+            <tr valign="top">
+                <th scope="row">
+                    <?php _e('Images only', 'easy-comment-uploads'); ?>
+                </th>
+                <td>
+                    <label for="images_only">
+                        <input id="images_only" type="checkbox"
+                            name="images_only"
+                            <?php echo $images_only ?> />
+                        <?php _e('Only allow images to be uploaded',
+                            'easy-comment-uploads'); ?>
+                    </label>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <label for="max_file_size">
+                        <?php _e('Size limit',
+                            'easy-comment-uploads') ?>
+                    </label>
+                </th>
+                <td>
+                    <input id="max_file_size" type="text"
+                        name="max_file_size" class='small-text'
+                        pattern="^[1-9]+[0-9]*|0$"
+                        value="<?php echo $max_file_size ?>" />
+                    <span class="description">
+                        <?php _e('Limit the size of uploaded files '
+                            . '(KiB, 0 = unlimited).',
+                            'easy-comment-uploads'); ?>
+                    </span>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <label for="file_extension_blacklist">
+                        <?php _e('Blacklisted extensions',
+                            'easy-comment-uploads'); ?>
+                    </label>
+                </th>
+                <td>
+                    <input id="file_extension_blacklist" type="text"
+                        value="<?php echo $file_extension_blacklist ?>"
+                        name="file_extension_blacklist"
+                        pattern="^[a-zA-Z0-9]+([, ][ ]*[a-zA-Z0-9]+)*$"
+                        class="large-text" />
+                    <span class="description">
+                        <?php _e('File extensions which may not be '
+                            . 'uploaded (extensions seperated with '
+                            . 'spaces, \'none\' to allow all (not '
+                            . 'recommended), or \'default\' to restore '
+                            . 'the default list).',
+                            'easy-comment-uploads'); ?>
+                    </span>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <label for="file_extension_whitelist">
+                        <?php _e('Allowed extensions',
+                            'easy-comment-uploads') ?>
+                    </label>
+                </th>
+                <td>
+                    <input id="file_extension_whitelist" type="text"
+                        value="<?php echo $file_extension_whitelist ?>"
+                        name="file_extension_whitelist"
+                        pattern="^[a-zA-Z0-9]+([, ][ ]*[a-zA-Z0-9]+)*$"
+                        class="large-text" />
+                    <span class="description">
+                        <?php _e('Only files with the following '
+                            . 'extensions will be allowed to be '
+                            . 'uploaded (extensions seperated with '
+                            . 'spaces, \'ignore\' to disable the '
+                            . 'whitelist, or \'default\' to restore '
+                            . 'the default list).',
+                            'easy-comment-uploads'); ?>
+                    </span>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <label for="per_filetype_upload_limits">
+                        <?php _e('Filetype size limits',
+                            'easy-comment-uploads') ?>
+                    </label>
+                </th>
+                <td>
+                    <textarea id="per_filetype_upload_limits"
+                        name="per_filetype_upload_limits"
+                        style="width : 100%; height : 65pt"
+                        pattern="^([a-zA-Z0-9]+),\s([1-9][0-9]*)$"
+                        ><?php echo $per_filetype_upload_limits ?></textarea>
+                    <span class="description">
+                        <?php _e('List of file extensions and size '
+                            . 'limits (an extenstion and a limit in '
+                            . 'KiB per line, seperated by a comma e.g. '
+                            . 'png, 2000).',
+                            'easy-comment-uploads'); ?>
+                    </span>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <label for="upload_dir_path">
+                        <?php _e('Upload directory',
+                            'easy-comment-uploads') ?>
+                    </label>
+                </th>
+                <td>
+                    <input id="upload_dir_path" type="text"
+                        name="upload_dir_path" class="large-text"
+                        value="<?php echo $upload_dir_path ?>" />
+                    <span class="description">
+                        <?php _e('Directory used for storing uploaded '
+                            . 'files (path relative to the Wordpress '
+                            . 'installation directory or leave blank '
+                            . 'for default location).',
+                            'easy-comment-uploads'); ?>
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+        </table>
 
-        <ul>
-        <li><input id="images_only" type="checkbox" name="images_only" 
-            <?php echo $images_only ?> />
-        <label for="images_only">
-            <?php _e('Only allow images to be uploaded.',
-                'easy-comment-uploads'); ?>
-        </label>
-        </li>
-        </p>
-
-        <li>
-        <?php _e('Limit the size of uploaded files:',
-            'easy-comment-uploads'); ?>
-        <input id="max_file_size" type="text" name="max_file_size"
-            value="<?php echo $max_file_size ?>" />
-        <label for="max_file_size">
-        (<?php _e('KiB, 0 = unlimited', 'easy-comment-uploads'); ?>)
-        </label>
-        </li>
-
-        <li>
-        <?php _e('Blacklist the following file extensions:',
-            'easy-comment-uploads'); ?>
-        <input id="file_extenstion_blacklist" type="text"
-            name="file_extension_blacklist"
-            value="<?php echo $file_extension_blacklist ?>" />
-        <br />
-        <label for="file_extenstion_blacklist">
-            (<?php _e('extensions seperated with spaces, \'none\' to '
-                . 'allow all (not recommended), or \'default\' to '
-                . 'restore the default list',
-                'easy-comment-uploads'); ?>)
-        </label>
-        </li>
-
-        <li>
-        <?php _e('Allow only the following file extensions:',
-            'easy-comment-uploads'); ?>
-        <input id="file_extenstion_whitelist" type="text"
-            name="file_extension_whitelist"
-            value="<?php echo $file_extension_whitelist; ?>" />
-        <br />
-        <label for="file_extension_whitelist">
-        (<?php _e('extensions seperated with '
-            . 'spaces, \'ignore\' to disable the whitelist, or '
-            . '\'default\' to restore the default list',
-            'easy-comment-uploads'); ?>)
-        </label>
-        </li>
+        <h3><?php _e('User Permissions', 'easy-comment-uploads') ?></h3>
         
-        <li>
-            <label for="per_filetype_upload_limits">
-                <?php _e('List of file extensions and size limits '
-                    . '(an extenstion and a limit in KiB per line, '
-                    . 'seperated by a comma e.g png, 2000)',
-                    'easy-comment-uploads'); ?>:
-            </label>
-            <br />
-            <textarea id="per_filetype_upload_limits"
-                name="per_filetype_upload_limits"
-                style="width : 100%; height : 65pt"
-                ><?php echo $per_filetype_upload_limits; ?></textarea>
-        </li>
-        
-        <li>
-        <?php _e('Store uploads in folder',
-            'easy-comment-uploads'); ?>:
-        <input id="upload_dir_path" type="text" name="upload_dir_path"
-            value="<?php echo $upload_dir_path ?>" />
-        <br />
-        <label for="file_extension_whitelist">
-            (<?php _e('path relative to the Wordpress installation '
-                . 'directory or leave blank for default location',
-                'easy-comment-uploads'); ?>)
-        </label>
-        </li>
-        </ul>
-
-        <h3><?php _e('User Permissions', 'easy-comment-uploads'); ?></h3>
-        <ul>
-        <li>
-        <input id="all_users" type="radio" name="permission_required"
-            value="none" <?php echo $permission_required[0] ?> />
-        <label for="all_users">
-        <?php _e('Allow all users to upload files with their '
-            . 'comments.', 'easy-comment-uploads'); ?>
-        </label>
-        </li>
-
-        <li>
-        <input id="registered_users_only" type="radio"
-            name="permission_required"
-            value="read" <?php echo $permission_required[1] ?> />
-        <label for="registered_users_only">
-        <?php _e('Only allow registered users to upload files.',
-            'easy-comment-uploads'); ?>
-        </label>
-        </li>
-
-        <li>
-        <input id="edit_rights_only" type="radio"
-            name="permission_required" value="edit_posts"
-            <?php $permission_required[2]; ?> />
-        <label for="edit_rights_only">
-        <?php _e('Require "Contributor" rights to upload files.',
-            'easy-comment-uploads'); ?>
-        </label>
-        </li>
-
-        <li>
-        <input id="upload_rights_only" type="radio" name="permission_required"
-            value="upload_files" <?php $permission_required[3]; ?> />
-        <label for="upload_rights_only">
-            <?php _e('Require \'Upload\' rights to uploads files'
-                . '(e.g. only admin, editors and authors).',
-                'easy-comment-uploads'); ?>
-        </label>
-        </li>
-            
-        <br />
-
-        <li><table class="widefat">
+        <table class="widefat">
+        <col />
+        <col align="left" />
+        <thead>
             <tr>
-                <th></th>
-                <th>
-                <?php _e('Uploads allowed per hour',
-                    'easy-comment-uploads'); ?>
-                <br />
-                <em>
-                (-1 = <?php _e('unlimited',
-                    'easy-comment-uploads'); ?>)</em>
+                <th scope="col" class="manage-column">
+                    <?php _e('User class') ?>
+                </th>
+                <th scope="col" class="manage-column">
+                    <?php _e('Permission required to upload images') ?>
+                </th>
+                <th scope="col">
+                    <?php _e('Uploads allowed per hour ',
+                        'easy-comment-uploads'); ?>
+                    (-1 = <?php _e('unlimited',
+                        'easy-comment-uploads') ?>)
                 </th>
             </tr>
+        </thead>
+        <tbody>
             <tr>
                 <th>
-                <?php _e('users with upload rights',
+                <?php _e('Users with upload rights',
                     'easy-comment-uploads'); ?>
                 <br />
                 <em>(<?php _e('e.g. only admin, editors and authors',
                     'easy-comment-uploads'); ?>)</em>
                 </th>
                 <td>
+                    <input id="upload_rights_only" type="radio"
+                        name="permission_required" value="read"
+                        <?php echo $permission_required[3] ?> />
+                </td>
+                <td>
                 <input id="upload_files_uploads_per_hour" type="text"
-                    name="upload_files_uploads_per_hour"
-                    value="<?php echo $uploads_per_hour[upload_files]; ?>" />
+                    name="upload_files_uploads_per_hour" class="small-text"
+                    value="<?php echo $uploads_per_hour[upload_files] ?>" />
                 </td>
             </tr>
             <tr>
                 <th>
-                <?php _e('contributors', 'easy-comment-uploads'); ?>
+                <?php _e('Contributors', 'easy-comment-uploads'); ?>
                 </th>
                 <td>
+                    <input id="edit_rights_only" type="radio"
+                        name="permission_required" value="edit_posts"
+                        <?php $permission_required[2] ?> />
+                </td>
+                <td>
                 <input id="edit_posts_uploads_per_hour" type="text"
-                    name="edit_posts_uploads_per_hour"
+                    name="edit_posts_uploads_per_hour" class="small-text"
                     value="<?php echo $uploads_per_hour[edit_posts]; ?>" />
                 </td>
             </tr>
             <tr>
                 <th>
-                <?php _e('registered users', 'easy-comment-uploads'); ?>
+                <?php _e('Registered users', 'easy-comment-uploads'); ?>
                 </th>
                 <td>
+                    <input id="registered_users_only" type="radio"
+                        name="permission_required"
+                        value="upload_files"
+                        <?php echo $permission_required[1] ?> />
+                </td>
+                <td>
                 <input id="read_uploads_per_hour" type="text"
-                    name="read_uploads_per_hour"
-                    value="<?php echo $uploads_per_hour[read]; ?>" />
-                    </td>
+                    name="read_uploads_per_hour" class="small-text"
+                    value="<?php echo $uploads_per_hour[read] ?>" />
+                </td>
             </tr>
             <tr>
                 <th>
-                <?php _e('unregistered users', 'easy-comment-uploads'); ?>
+                <?php _e('Unregistered users', 'easy-comment-uploads'); ?>
                 </th>
                 <td>
+                    <input id="all_users" type="radio"
+                        name="permission_required"
+                        value="none"
+                        <?php echo $permission_required[0] ?> />
+                </td>
+                <td>
                 <input id="none_uploads_per_hour" type="text"
-                    name="none_uploads_per_hour"
+                    name="none_uploads_per_hour" class="small-text"
                     value="<?php echo $uploads_per_hour[none]; ?>" />
                 </td>
             </tr>
-        </table></li>
-        </ul>
-
-        <h3><?php _e('Upload Form', 'easy-comment-uploads'); ?></h3>
-        <ul>
-        <li>
-            <label for="upload_form_heading">
-                <?php _e('Title of the upload form'
-                    . '(leave blank for default title)',
-                    'easy-comment-uploads'); ?>:
-            </label>
-            <input type="text" id="upload_form_heading"
-                name="upload_form_heading"
-                value="<?php echo $upload_form_heading; ?>" />
-        </li>        
-        
-        <li>
-            <label for="upload_form_text">
-                <?php _e('Text explaining use of the upload form '
-                    . '(leave blank for default text)',
-                    'easy-comment-uploads'); ?>:
-            </label>
-            <br />
-            <textarea id="upload_form_text" name="upload_form_text"
-                style="width : 100%; height : 65pt"
-                ><?php echo $upload_form_text; ?></textarea>
-        </li>
-
-        <li>
-            <input id="hide_comment_form" type="checkbox"
-            name="hide_comment_form" <?php echo $hide_comment_form; ?> />
-            <label for="hide_comment_form">
-                <?php _e('Hide from comment forms',
-                    'easy-comment-uploads'); ?>
-            </label>
-        </li>
-        
-        <li>
-            <?php _e('Only allow uploads in this category',
-                'easy-comment-uploads'); ?>:
-            <input id="enabled_category" type="text"
-                name="enabled_category"
-                value="<?php echo $enabled_category; ?>" />
-            <br />
-            <label for="enabled_category">
-            (<a href="http://www.wprecipes.com/how-to-find-wordpress-category-id"
-            ><?php _e('category id', 'easy-comment-uploads'); ?></a>
-            <?php _e('or leave blank to enable globally',
-            'easy-comment-uploads'); ?>)
-            </label>
-        </li>
-        
-        <li>
-            <?php _e('Only allow uploads on these pages',
-            'easy-comment-uploads'); ?>:
-            <input id="enabled_pages" type="text" name="enabled_pages"
-            value="<?php echo $enabled_pages; ?>" />
-            <br />
-            <label for="enabled_pages">
-            (<a href="http://www.techtrot.com/wordpress-page-id/"
-            ><?php _e('page ids', 'easy-comment-uploads'); ?></a>
-            <?php _e('seperated with spaces or \'all\' to enable '
-                . 'globally', 'easy-comment-uploads'); ?>)
-            </label>
-        </li>
-        </ul>
-
-        <h3><?php _e('Comments', 'easy-comment-uploads'); ?></h3>
-        <ul>
-        <li>
-            <input id="show_full_file_path" type="checkbox"
-                name="show_full_file_path"
-                <?php echo $show_full_file_path; ?> />
-            <label for="show_full_file_path">
-                <?php _e('Show full url in links to files',
-                'easy-comment-uploads'); ?>
-            </label>
-        </li>
-        
-        <li>
-            <input id="display_images_as_links" type="checkbox"
-                name="display_images_as_links"
-                <?php echo $display_images_as_links; ?> />
-            <label for="display_images_as_links">
-                <?php _e('Replace images with links',
-                    'easy-comment-uploads'); ?>
-            </label>
-        </li>
-        </ul>
+        </tbody>
+        </table>
 
         <p class="submit">
             <input type="submit" class="button-primary"
@@ -676,16 +777,28 @@ function ecu_extract_cat_ID($category) {
 function ecu_allow_upload() {
     global $post;
     $permission_required = get_option('ecu_permission_required');
+    $upload_form_visibility = get_option('ecu_upload_form_visibility');
     $enabled_pages = get_option('ecu_enabled_pages');
     $enabled_category = get_option('ecu_enabled_category');
     $categories = array_map('ecu_extract_cat_ID', get_the_category());
-
-    return ($permission_required == 'none'
-        || current_user_can($permission_required))
-        && (in_array($post->ID, explode(' ', $enabled_pages))
-            || $enabled_pages == 'all')
-        && (in_array($enabled_category, $categories)
-            || $enabled_category == '');
+    
+    // If the current user does not pocess the permissions required to upload
+    // files, return false
+    if (!($permission_required == 'none'
+        || current_user_can($permission_required)))
+        return false;
+    
+    // Perform the appropriate check for the selected level of visibility
+    switch ($upload_form_visibility) {
+        case 'all':
+            return true;
+        case 'category':
+            return in_array($enabled_category, $categories);
+        case 'pages':
+            return in_array($post->ID, $enabled_pages);
+        case 'none':
+            return false;
+    }
 }
 
 // Set options to defaults, if not already set
@@ -699,25 +812,35 @@ function ecu_initial_options() {
         update_option('ecu_show_full_file_path', 0);
     if (get_option('ecu_display_images_as_links') === false)
         update_option('ecu_display_images_as_links', 0);
-    if (get_option('ecu_hide_comment_form') === false)
-        update_option('ecu_hide_comment_form', 0);
+    if (get_option('ecu_hide_comment_form') !== false) {
+        if (get_option('ecu_hide_comment_form'))
+            update_option('ecu_upload_form_visibility', 'none');
+        delete_option('ecu_hide_comment_form');
+    }
     if (get_option('ecu_images_only') === false)
         update_option('ecu_images_only', 0);
     if (get_option('ecu_max_file_size') === false)
         update_option('ecu_max_file_size', 0);
     if (get_option('ecu_enabled_pages') === false)
-        update_option('ecu_enabled_pages', 'all');
+        update_option('ecu_enabled_pages', array());
+    else if (get_option('ecu_enabled_pages') == 'all')
+        update_option('ecu_enabled_pages', array());
+    else if (is_string(get_option('ecu_enabled_pages')))
+        update_option('ecu_enabled_pages', explode(', ',
+            get_option('ecu_enabled_pages')));
     if (get_option('ecu_enabled_category') === false)
         update_option('ecu_enabled_category', '');
     if (get_option('ecu_ip_upload_times') === false)
         update_option('ecu_ip_upload_times', array());
     if (get_option('ecu_uploads_per_hour') === false)
         update_option('ecu_uploads_per_hour', array(
-                'upload_files' => -1,
-                'edit_posts' => 50,
-                'read' => 10,
-                'none' => 5,
-            ));
+            'upload_files' => -1,
+            'edit_posts' => 50,
+            'read' => 10,
+            'none' => 5,
+        ));
+    if (get_option('ecu_upload_form_visibility') === false)
+        update_option('ecu_upload_form_visibility', 'all');
     if (get_option('ecu_per_filetype_upload_limits') === false)
         update_option('ecu_per_filetype_upload_limits', array());
 }
