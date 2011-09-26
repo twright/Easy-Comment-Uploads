@@ -1,6 +1,6 @@
 === Easy Comment Uploads ===
 Contributors: tomdwright
-Donate link: http://goo.gl/WFJP6
+Donate link: http://goo.gl/WFJP6x
 Tags: comments, uploads, images
 Requires at least: 3.0.0
 Tested up to: 3.2.1
@@ -12,6 +12,14 @@ This plugin allow your visitors to attach images or other file to their comments
 
 If you like it please rate it, give feedback or you can support its further development by donating.
 
+== Screenshots ==
+
+1. Comments with uploaded images and files
+2. The plugin's options page
+3. You can access the options page from the plugins list
+4. Potentially dangerous files prevented from being uploaded
+5. The images integrate with most Lightbox plugins
+
 == Upgrade Notice ==
 
 = 0.70 =
@@ -21,10 +29,13 @@ If you like it please rate it, give feedback or you can support its further deve
 
 **1.00**
 
+ * Improved handling of thumbnail script errors.
+ * Improved placing of upload form.
+ * Improved validation on options page.
  * Media library integration.
  * Redesigned options page.
  * Set size limits for specific file extensions.
- * Error handling improvements.
+ * Upload error handling improvements.
  * Fix visual issues which occurred with some themes.
  * Made all remaining strings translatable.
  * Allow changing of upload form title.
