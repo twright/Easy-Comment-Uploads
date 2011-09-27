@@ -79,44 +79,29 @@
 		$type = ($is_image) ? "img" : "file";
 
 		if (!is_writable($target_dir)) {
-			$alert = sprintf(__('Files can not be written to %s.\n'
-				. 'Please make sure that the permissions are set '
-				. 'correctly (mode 666).'), $target_dir);
+			$alert = sprintf(__('Files can not be written to %s.\nPlease make sure that the permissions are set correctly (mode 666).'), $target_dir);
 		} else if (empty($_FILES) && empty($_POST)
 			&& isset($_SERVER['REQUEST_METHOD'])
 			&& strtolower($_SERVER['REQUEST_METHOD']) == 'post') {
-			$alert = sprintf(__('Your file has exceeded the PHP '
-				. 'max_post_size (%u MiB).\n'
-				. 'Please choose a smaller file or ask the website '
-				. 'administrator to update this setting in the '
-				. 'php.ini configuration file.',
+			$alert = sprintf(__('Your file has exceeded the PHP max_post_size (%u MiB).\nPlease choose a smaller file or ask the website administrator to update this setting in the php.ini configuration file.',
 				'easy-comment-uploads'), $max_post_size);
 		} else if ($_FILES['file']['error'] == UPLOAD_ERR_INI_SIZE) {
-			$alert = sprintf(__('Your file has exceeded the PHP '
-				. 'max_upload_size (%u MiB).\n'
-				. 'Please choose a smaller file or ask the website '
-				. 'administrator to update this setting in the '
-				. 'php.ini configuration file.',
+			$alert = sprintf(__('Your file has exceeded the PHP max_upload_size (%u MiB).\n'
+				. 'Please choose a smaller file or ask the website administrator to update this setting in the php.ini configuration file.',
 				'easy-comment-uploads'), $max_upload_size);
 		} else if ($FILES['file']['error'] == UPLOAD_ERR_PARTIAL) {
-			$alert = __('Your file was only partially uploaded. '
-				. 'Please try again.', 'easy-comment-uploads');
+			$alert = __('Your file was only partially uploaded. Please try again.', 'easy-comment-uploads');
 		} else if (!$is_image && $images_only) {
 			$alert = __('Sorry, you can only upload images.',
 				'easy-comment-uploads');
 		} else if (filetype_blacklisted()) {
-			$alert = __('You are attempting to upload a file with a'
-				. 'disallowed/unsafe filetype!',
+			$alert = __('You are attempting to upload a file with a disallowed/unsafe filetype!',
 				'easy-comment-uploads');
 		} else if (!filetype_whitelisted() && ecu_get_whitelist()) {
-			$alert = __('You may only upload files with the '
-				. 'following extensions: ', 'easy-comment-uploads')
+			$alert = __('You may only upload files with the following extensions: ', 'easy-comment-uploads')
 				. implode(', ', ecu_get_whitelist());
 		} else if (!file_within_size($extension, $limit)) {
-			$alert = sprintf(__('The file you have uploaded is too large '
-				. '(%u KiB).\nPlease choose a smaller file and try '
-				. 'again (uploads are limited to %u KiB%s).',
-				'easy-comment-uploads'),
+			$alert = sprintf(__('The file you have uploaded is too large (%u KiB).\nPlease choose a smaller file and try again (uploads are limited to %u KiB%s).', 'easy-comment-uploads'),
 				round($_FILES['file']['size']/1024, 1),
 				$limit,
 				$extension ? sprintf(__(' for .%s files',
@@ -124,8 +109,7 @@
 		} else if (ecu_user_uploads_per_hour() != -1
 			&& ecu_user_uploads_in_last_hour()
 			>= ecu_user_uploads_per_hour()) {
-			$alert = sprintf(__('You are only permitted to upload %u '
-				. 'files per hour.', 'easy-comment-uploads'),
+			$alert = sprintf(__('You are only permitted to upload %u files per hour.', 'easy-comment-uploads'),
 				ecu_user_uploads_per_hour());
 		} else if (!wp_verify_nonce($_REQUEST['_wpnonce'],
 			'ecu_upload_form')) {
