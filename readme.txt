@@ -4,7 +4,7 @@ Donate link: http://goo.gl/WFJP6x
 Tags: comments, uploads, images
 Requires at least: 3.0.0
 Tested up to: 3.2.1
-Stable tag: 0.71
+Stable tag: 1.00
 
 == Description ==
 
@@ -145,7 +145,7 @@ Changes by Pascal de Vink (www.finalist.com):
 
 **0.20**
 
- * ru_RU translation thanks to Fat Cow (http://www.fatcow.com/).
+ * ru_RU translation thanks to Fat Cow.
 
 **0.19**
 
