@@ -224,6 +224,7 @@ As with all plugins, new versions include security fixes and resolve other bugs 
 It should work in any modern browser. It does not require flash but does require JavaScript support.
 
 It has been tested with:
+
  * Google Chrome
  * Firefox (version 3 or higher)
  * Internet Explorer (version 6 or higher)
