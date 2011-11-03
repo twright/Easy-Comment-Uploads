@@ -4,7 +4,7 @@ Donate link: http://goo.gl/WFJP6x
 Tags: comments, uploads, images
 Requires at least: 3.0.0
 Tested up to: 3.2.1
-Stable tag: 1.00
+Stable tag: 1.01
 
 == Description ==
 
@@ -26,6 +26,10 @@ If you like it please rate it, give feedback or you can support its further deve
  This version contains many important security improvements. You should upgrade as soon as possible to make sure your site is secure.
 
 == Changelog ==
+
+**1.01**
+
+ * Fix bug preventing saving of options.
 
 **1.00**
 

@@ -4,7 +4,7 @@ Plugin Name: Easy Comment Uploads
 Plugin URI: http://wordpress.org/extend/plugins/easy-comment-uploads/
 Description: Allow your users to easily upload images and files with their comments.
 Author: Tom Wright
-Version: 1.00
+Version: 1.01
 Author URI: http://gplus.to/twright/
 License: GPLv3
 */
@@ -274,7 +274,7 @@ function ecu_options_page() {
 
 		// Update options
 		
-		try {
+		//try {
 			// Upload Form
 			if (isset($_POST['upload_form_heading']))
 				if (preg_match('/^(\w+( \w+)*|)$/',
@@ -369,12 +369,13 @@ function ecu_options_page() {
 				else throw new InvalidInputException();
 			if (isset($_POST['per_filetype_upload_limits'])) {
 				$limits = array();
-				foreach (explode("\n",
-					$_POST['per_filetype_upload_limits']) as $line)
-					if (preg_match('/([a-z0-9]+),\s([1-9][0-9]*)/i',
-						$line, $matches))
-						$limits[$matches[1]] = $matches[2];
-					else throw new InvalidInputException();
+				if ($_POST['per_filetype_upload_limits'] != '')
+					foreach (explode("\n",
+						$_POST['per_filetype_upload_limits']) as $line)
+						if (preg_match('/([a-z0-9]+),\s([1-9][0-9]*)/i',
+							$line, $matches))
+							$limits[$matches[1]] = $matches[2];
+						else throw new InvalidInputException();
 				update_option('ecu_per_filetype_upload_limits', $limits);
 			}
 			if (isset($_POST['upload_dir_path']))
@@ -426,9 +427,9 @@ function ecu_options_page() {
 					update_option('ecu_uploads_per_hour',
 						$uploads_per_hour);
 				} else throw new InvalidInputException();
-		} catch (InvalidInputException $e) {
-			$alert = __('Option invalid: please use the specified format.', 'easy-comment-uploads');
-		}
+		//} catch (InvalidInputException $e) {
+		//	$alert = __('Option invalid: please use the specified format.', 'easy-comment-uploads');
+		//}
 			
 		// Inform user
 		if (!isset($alert))
