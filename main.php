@@ -274,7 +274,7 @@ function ecu_options_page() {
 
 		// Update options
 		
-		//try {
+		try {
 			// Upload Form
 			if (isset($_POST['upload_form_heading']))
 				if (preg_match('/^(\w+( \w+)*|)$/',
@@ -427,9 +427,9 @@ function ecu_options_page() {
 					update_option('ecu_uploads_per_hour',
 						$uploads_per_hour);
 				} else throw new InvalidInputException();
-		//} catch (InvalidInputException $e) {
-		//	$alert = __('Option invalid: please use the specified format.', 'easy-comment-uploads');
-		//}
+		} catch (InvalidInputException $e) {
+			$alert = __('Option invalid: please use the specified format.', 'easy-comment-uploads');
+		}
 			
 		// Inform user
 		if (!isset($alert))
